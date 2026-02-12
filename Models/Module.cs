@@ -4,12 +4,19 @@ namespace Biashara_POS.Models
 {
     public class Module
     {
+        [Key]
         public int ModuleId { get; set; }
 
+        // --------------------
+        // REQUIRED COLUMN
+        // --------------------
         [Required]
-        public string ModuleName { get; set; } = ""; // Sales, Inventory
+        [MaxLength(100)]
+        public string ModuleName { get; set; } = string.Empty; // Sales, Inventory
 
-        public ICollection<AppFunction> Functions { get; set; }
-
+        // --------------------
+        // NAVIGATION PROPERTY
+        // --------------------
+        public ICollection<AppFunction> Functions { get; set; } = new List<AppFunction>();
     }
 }
