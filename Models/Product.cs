@@ -3,17 +3,22 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Biashara_POS.Models
 {
-    public class Item
+    public class Product
     {
         [Key]
-        public int ItemId { get; set; }
+        public int ProductId { get; set; }
 
         // --------------------
-        // ITEM DETAILS
+        // PRODUCT DETAILS
         // --------------------
         [Required]
         [MaxLength(150)]
-        public string ItemName { get; set; } = string.Empty;
+        public string ProductName { get; set; } = string.Empty;
+
+        [MaxLength(100)]
+        public string? Barcode { get; set; }
+
+        public bool IsActive { get; set; } = true;
 
         // --------------------
         // FOREIGN KEYS
@@ -44,22 +49,12 @@ namespace Biashara_POS.Models
         [Range(0, int.MaxValue)]
         public int ReorderLevel { get; set; }
 
-        public bool IsActive { get; set; } = true;
-
         // --------------------
         // NAVIGATION
         // --------------------
-        [ForeignKey(nameof(StockCategoryId))]
         public StockCategory StockCategory { get; set; } = null!;
-
-        [ForeignKey(nameof(StockSubCategoryId))]
         public StockSubCategory StockSubCategory { get; set; } = null!;
-
-        [ForeignKey(nameof(StockMeasureId))]
         public StockMeasure StockMeasure { get; set; } = null!;
-
-        [ForeignKey(nameof(VatSetupId))]
         public VatSetup VatSetup { get; set; } = null!;
-
     }
 }
