@@ -1,0 +1,87 @@
+﻿@model CompanyDto
+@{
+}
+
+<div class="row">
+    <div class="col-md-8 mx-auto rounded border p-4 shadow">
+        <h2 class="text-center mb-4"><i class="bi bi-plus-circle-fill text-success">Create New Company</i></h2>
+
+        <form method="post" enctype="multipart/form-data">
+
+            <!-- Company Name -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label">Company Name</label>
+                <div class="col-sm-8">
+                    <input class="form-control" asp-for="CompanyName" />
+                    <span asp-validation-for="CompanyName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Registration Type -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label">Registration Type</label>
+                <div class="col-sm-8">
+                    <select class="form-select" asp-for="RegistrationType">
+                        <option value="">-- Select Type --</option>
+                        <option value="Individual">Individual</option>
+                        <option value="Business">Business</option>
+                    </select>
+                    <span asp-validation-for="RegistrationType" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- KRA PIN -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label">KRA PIN</label>
+                <div class="col-sm-8">
+                    <input class="form-control" asp-for="KRAPin" />
+                    <span asp-validation-for="KRAPin" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label">Email</label>
+                <div class="col-sm-8">
+                    <input class="form-control" asp-for="Email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Phone -->
+            <div class="row mb-3">
+                <label class="col-sm-4 col-form-label">Phone</label>
+                <div class="col-sm-8">
+                    <input class="form-control" asp-for="Phone" />
+                    <span asp-validation-for="Phone" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Company Image -->
+            <div class="row mb-4">
+                <label class="col-sm-4 col-form-label">Company Logo</label>
+                <div class="col-sm-8">
+                    <input type="file" class="form-control" asp-for="ImageFile" />
+                    <span asp-validation-for="ImageFile" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="row">
+                <div class="col-sm-8 offset-sm-4">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+	

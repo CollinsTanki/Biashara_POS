@@ -1,0 +1,118 @@
+﻿@model IEnumerable<Biashara_POS.Models.Company>
+
+@{
+    ViewData["Title"] = "Companies";
+}
+
+<div class="container-fluid mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold">Company Management</h2>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add New Company
+        </a>
+    </div>
+
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body table-responsive">
+
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Logo</th>
+                        <th>Company Name</th>
+                        <th>Registration Type</th>
+                        <th>KRA PIN</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Branches</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.LogoPath))
+                                {
+                                    <img src="~/@item.LogoPath"
+                                         width="50"
+                                         height="50"
+                                         class="rounded-circle border"
+                                         style="object-fit:cover;" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No Logo</span>
+                                }
+                            </td>
+
+                            <td class="fw-semibold">
+                                @item.CompanyName
+                            </td>
+
+                            <td>
+                                @if (item.RegistrationType == "Business")
+                                {
+                                    <span class="badge bg-success">
+                                        Business
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-info">
+                                        Individual
+                                    </span>
+                                }
+                            </td>
+
+                            <td>
+                                @(string.IsNullOrEmpty(item.KRAPin) ? "-" : item.KRAPin)
+                            </td>
+
+                            <td>@item.Email</td>
+                            <td>@item.Phone</td>
+
+                            <td>
+                                <span class="badge bg-secondary">
+                                    @item.Branches.Count()
+                                </span>
+                            </td>
+
+                            <td class="text-end">
+                                <a asp-action="Details"
+                                   asp-route-id="@item.CompanyId"
+                                   class="btn btn-sm btn-info">
+                                    Details
+                                </a>
+
+                                <a asp-action="Edit"
+                                   asp-route-id="@item.CompanyId"
+                                   class="btn btn-sm btn-warning">
+                                    Edit
+                                </a>
+
+                                <a asp-action="Delete"
+                                   asp-route-id="@item.CompanyId"
+                                   class="btn btn-sm btn-danger">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            @if (!Model.Any())
+            {
+                <div class="text-center py-4 text-muted">
+                    No companies found.
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
