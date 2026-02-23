@@ -14,38 +14,48 @@ namespace Biashara_POS.Controllers
             this.context = context;
             this.environment = environment;
         }
+
         public IActionResult Index()
         {
             var companies = context.Companies.ToList();
             return View(companies);
         }
+
         public IActionResult Create()
         {
             return View();
         }
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Create(CompanyDto companyDto)
         {
-            if (companyDto.ImageFile == null)
-            {
-                ModelState.AddModelError("ImageFile", "The Image is required.");
-            }
             if (!ModelState.IsValid)
             {
                 return View(companyDto);
             }
 
-            // Save the uploaded image
-            string newFileName = DateTime.Now.ToString("yyyyMMddHHssfff");
+            // Generate unique filename
+            string newFileName = Guid.NewGuid().ToString();
             newFileName += Path.GetExtension(companyDto.ImageFile!.FileName);
 
-            string imageFullPath = environment.WebRootPath + "/images/" + newFileName;
-            using (var stream = System.IO.File.Create(imageFullPath))
+            // Ensure images folder exists
+            string imagesFolder = Path.Combine(environment.WebRootPath, "images");
+
+            if (!Directory.Exists(imagesFolder))
+            {
+                Directory.CreateDirectory(imagesFolder);
+            }
+
+            string imageFullPath = Path.Combine(imagesFolder, newFileName);
+
+            // Save file
+            using (var stream = new FileStream(imageFullPath, FileMode.Create))
             {
                 companyDto.ImageFile.CopyTo(stream);
             }
 
-            // Save the new logo in the database
+            // Save to database
             Company company = new Company()
             {
                 CompanyName = companyDto.CompanyName,
@@ -53,19 +63,13 @@ namespace Biashara_POS.Controllers
                 KRAPin = companyDto.KRAPin,
                 Email = companyDto.Email,
                 Phone = companyDto.Phone,
-                LogoPath = newFileName, // Save only filename
-               // CreatedAt = DateTime.Now   // optional if you have it
-
-
+                LogoPath = newFileName
             };
+
             context.Companies.Add(company);
             context.SaveChanges();
 
-
-
-
-                return RedirectToAction("Index", "Companies");
+            return RedirectToAction("Index", "Company");
         }
-
     }
 }

@@ -37,7 +37,7 @@
                             <td>
                                 @if (!string.IsNullOrEmpty(item.LogoPath))
                                 {
-                                    <img src="~/@item.LogoPath"
+                                    <img src="@Url.Content("~/images/" + item.LogoPath)"
                                          width="50"
                                          height="50"
                                          class="rounded-circle border"

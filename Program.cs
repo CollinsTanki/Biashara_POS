@@ -5,7 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// DB CONNECTION
+// ===============================
+// DATABASE CONNECTION
+// ===============================
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
@@ -14,7 +16,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// IDENTITY (AppUser)
+// ===============================
+// IDENTITY CONFIGURATION
+// ===============================
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
@@ -22,15 +26,17 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// ✅ Add MVC
+// ===============================
+// ADD MVC + RAZOR PAGES
+// ===============================
 builder.Services.AddControllersWithViews();
-
-// ✅ ADD THIS (VERY IMPORTANT FOR IDENTITY)
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages(); // Required for Identity UI
 
 var app = builder.Build();
 
-// PIPELINE
+// ===============================
+// MIDDLEWARE PIPELINE
+// ===============================
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -42,19 +48,28 @@ else
 }
 
 app.UseHttpsRedirection();
+
+
+// ================================================
+// ✅ VERY IMPORTANT: ENABLE STATIC FILES HERE
+// This allows images, CSS, JS from wwwroot to work
+// Your company logos in wwwroot/images depend on this
+// ================================================
 app.UseStaticFiles();
+
 
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-// MVC Route
+// ===============================
+// ROUTING
+// ===============================
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// ✅ Required for Identity UI (Login/Register)
+// Required for Identity (Login, Register, etc.)
 app.MapRazorPages();
-
 app.Run();
