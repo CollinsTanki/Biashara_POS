@@ -1,6 +1,7 @@
 ﻿using Biashara_POS.Data;
 using Biashara_POS.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Biashara_POS.Controllers
 {
@@ -17,7 +18,9 @@ namespace Biashara_POS.Controllers
 
         public IActionResult Index()
         {
-            var companies = context.Companies.ToList();
+            var companies = context.Companies
+                       .Include(c => c.Branches)
+                       .ToList();
             return View(companies);
         }
 
