@@ -8,11 +8,7 @@ namespace Biashara_POS.Models
         [Key]
         public int ProductId { get; set; }
 
-        // --------------------
-        // PRODUCT DETAILS
-        // --------------------
-        [Required]
-        [MaxLength(150)]
+        [Required, MaxLength(150)]
         public string ProductName { get; set; } = string.Empty;
 
         [MaxLength(100)]
@@ -20,38 +16,29 @@ namespace Biashara_POS.Models
 
         public bool IsActive { get; set; } = true;
 
-        // --------------------
-        // FOREIGN KEYS
-        // --------------------
-        [Required]
+        // Foreign keys
         public int StockCategoryId { get; set; }
-
-        [Required]
         public int StockSubCategoryId { get; set; }
-
-        [Required]
         public int StockMeasureId { get; set; }
-
-        [Required]
         public int VatSetupId { get; set; }
 
-        // --------------------
-        // PRICING
-        // --------------------
+        // Pricing
         [Column(TypeName = "decimal(18,2)")]
-        [Range(0, double.MaxValue)]
         public decimal BuyingPrice { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
-        [Range(0, double.MaxValue)]
         public decimal SellingPrice { get; set; }
 
-        [Range(0, int.MaxValue)]
         public int ReorderLevel { get; set; }
 
         // --------------------
-        // NAVIGATION
+        // IMAGE
         // --------------------
+        [MaxLength(250)]
+        [Display(Name = "Product Image")]
+        public string? ImagePath { get; set; } // path in wwwroot/images/products
+
+        // Navigation
         public StockCategory StockCategory { get; set; } = null!;
         public StockSubCategory StockSubCategory { get; set; } = null!;
         public StockMeasure StockMeasure { get; set; } = null!;

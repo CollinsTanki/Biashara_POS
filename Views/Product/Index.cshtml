@@ -1,0 +1,121 @@
+﻿@model IEnumerable<Biashara_POS.DTOs.ProductDto>
+
+@{
+    ViewData["Title"] = "Products";
+}
+
+<div class="container-fluid mt-4">
+
+    <div class="d-flex justify-content-between mb-3">
+        <h3 class="fw-bold">Product List</h3>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add New Product
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body table-responsive">
+
+            <table class="table table-hover table-bordered align-middle">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>Image</th> <!-- 🔥 Added Image Column -->
+                        <th>Name</th>
+                        <th>Barcode</th>
+                        <th>Category</th>
+                        <th>Sub Category</th>
+                        <th>Measure</th>
+                        <th>VAT</th>
+                        <th class="text-end">Buying</th>
+                        <th class="text-end">Selling</th>
+                        <th class="text-end">Profit</th>
+                        <th class="text-center">Reorder</th>
+                        <th class="text-center">Status</th>
+                        <th width="160" class="text-center">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            bool isLowStock = item.ReorderLevel <= 5;
+
+                            <tr class="@(isLowStock ? "table-warning" : "")">
+                                <!-- 🔥 Product Image -->
+                                <td class="text-center">
+                                    @if (!string.IsNullOrEmpty(item.ImagePath))
+                                    {
+                                        <img src="~/@item.ImagePath" alt="@item.ProductName"
+                                             class="img-thumbnail" style="width:60px; height:60px;" />
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No Image</span>
+                                    }
+                                </td>
+
+                                <td>@item.ProductName</td>
+                                <td>@item.Barcode</td>
+                                <td>@item.CategoryName</td>
+                                <td>@item.SubCategoryName</td>
+                                <td>@item.MeasureName</td>
+                                <td>@item.VatName</td>
+
+                                <td class="text-end">@item.BuyingPrice.ToString("N2")</td>
+                                <td class="text-end">@item.SellingPrice.ToString("N2")</td>
+                                <td class="text-end fw-bold @(item.Profit >= 0 ? "text-success" : "text-danger")">
+                                    @item.Profit.ToString("N2")
+                                </td>
+                                <td class="text-center">@item.ReorderLevel</td>
+
+                                <td class="text-center">
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge bg-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Inactive</span>
+                                    }
+                                </td>
+
+                                <td class="text-center">
+                                    <a asp-action="Edit"
+                                       asp-route-id="@item.ProductId"
+                                       class="btn btn-sm btn-warning">
+                                        Edit
+                                    </a>
+
+                                    <a asp-action="Details"
+                                       asp-route-id="@item.ProductId"
+                                       class="btn btn-sm btn-info text-white">
+                                        Details
+                                    </a>
+
+                                    <a asp-action="Delete"
+                                       asp-route-id="@item.ProductId"
+                                       class="btn btn-sm btn-danger">
+                                        Delete
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="13" class="text-center text-muted">
+                                No products available.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
