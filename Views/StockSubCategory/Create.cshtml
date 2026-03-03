@@ -1,0 +1,32 @@
+﻿@model Biashara_POS.DTOs.StockSubCategory.CreateStockSubCategoryDto
+
+@{
+    ViewData["Title"] = "Create Stock Sub Category";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="StockCategoryId" class="form-label"></label>
+        <select asp-for="StockCategoryId" asp-items="ViewBag.Categories" class="form-select">
+            <option value="">-- Select Category --</option>
+        </select>
+        <span asp-validation-for="StockCategoryId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SubCategoryName" class="form-label"></label>
+        <input asp-for="SubCategoryName" class="form-control" />
+        <span asp-validation-for="SubCategoryName" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        <i class="bi bi-check-circle"></i> Save
+    </button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

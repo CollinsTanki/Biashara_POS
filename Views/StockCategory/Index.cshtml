@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Biashara_POS.DTOs.StockCategoryDto>
+
+@{
+    ViewData["Title"] = "Stock Categories";
+}
+
+<h2 class="mb-4">Stock Categories</h2>
+
+<a asp-action="Create" class="btn btn-primary mb-3">
+    <i class="bi bi-plus-circle"></i> Add New Category
+</a>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Category Name</th>
+            <th>Status</th>
+            <th style="width:150px;">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            int count = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@count</td>
+                    <td>@item.CategoryName</td>
+                    <td>
+                        @if (item.IsActive)
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Inactive</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.StockCategoryId"
+                           class="btn btn-sm btn-warning">
+                            Edit
+                        </a>
+                    </td>
+                </tr>
+                count++;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center">
+                    No Categories Found
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

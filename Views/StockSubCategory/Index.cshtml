@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Biashara_POS.DTOs.StockSubCategory.StockSubCategoryViewDto>
+
+@{
+    ViewData["Title"] = "Stock Sub Categories";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<a asp-action="Create" class="btn btn-primary mb-3">
+    <i class="bi bi-plus-circle"></i> Add New Sub Category
+</a>
+
+<table class="table table-bordered table-striped table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>#</th>
+            <th>Sub Category Name</th>
+            <th>Category</th>
+            <th>Is Active</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.StockSubCategoryId</td>
+                <td>@item.SubCategoryName</td>
+                <td>@item.CategoryName</td>
+                <td>
+                    @if (item.IsActive)
+                    {
+                        <span class="badge bg-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Inactive</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.StockSubCategoryId" class="btn btn-sm btn-warning">
+                        <i class="bi bi-pencil"></i> Edit
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

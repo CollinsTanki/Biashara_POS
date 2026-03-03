@@ -1,22 +1,132 @@
+/* ===========================
+   BASE STYLES
+=========================== */
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
+    margin: 0 0 60px 0;
+    background-color: #f4f6f9;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Focus outline for buttons and form controls */
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+/* ===========================
+   HEADER / TOPBAR
+=========================== */
+header.navbar {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    z-index: 1050;
+}
+
+/* Navbar right items spacing */
+.navbar-nav .nav-link {
+    padding: 0 0.5rem;
+}
+
+/* ===========================
+   SIDEBAR
+=========================== */
+.sidebar {
+    width: 250px;
+    min-height: 100vh;
+    position: sticky;
+    top: 0;
+    background-color: #111827;
+    padding: 1rem;
+}
+
+    .sidebar .nav-link {
+        color: #cbd5e1;
+        border-radius: 5px;
+        padding: 8px 12px;
+        margin-bottom: 5px;
+        transition: all 0.2s ease-in-out;
+    }
+
+        .sidebar .nav-link:hover {
+            background-color: #1f2937;
+            color: #fff;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #2563eb;
+            color: #fff;
+            font-weight: 500;
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.3);
+        }
+
+            .sidebar .nav-link.active:hover {
+                background-color: #1d4ed8;
+            }
+
+    .sidebar .section-title {
+        font-size: 12px;
+        color: #9ca3af;
+        margin: 15px 0 8px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+/* ===========================
+   CONTENT AREA
+=========================== */
+.content-area {
+    flex-grow: 1;
+    padding: 30px;
+    background-color: #f9fafb;
+    min-height: 100vh;
+}
+
+/* Page title */
+.page-title {
+    font-size: 1.5rem;
+    color: #111827;
+    margin-bottom: 1.5rem;
+}
+
+/* ===========================
+   CARDS
+=========================== */
+.card {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* ===========================
+   FOOTER
+=========================== */
+footer {
+    background: none;
+    padding: 15px 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+/* ===========================
+   TRANSITIONS
+=========================== */
+.nav-link,
+.sidebar .nav-link {
+    transition: all 0.2s ease-in-out;
 }
