@@ -1,0 +1,36 @@
+﻿@model Biashara_POS.DTOs.UpdateStockMeasureDto
+
+@{
+    ViewData["Title"] = "Edit Stock Measure";
+}
+
+<div class="container mt-4">
+    <h2>Edit Stock Measure</h2>
+
+    <form asp-action="Edit" method="post">
+
+        <input type="hidden" asp-for="StockMeasureId" />
+
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="MeasureName" class="form-label"></label>
+            <input asp-for="MeasureName" class="form-control" />
+            <span asp-validation-for="MeasureName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Initials" class="form-label"></label>
+            <input asp-for="Initials" class="form-control" />
+            <span asp-validation-for="Initials" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -19,40 +19,13 @@
     <header class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top px-3">
         <div class="container-fluid d-flex justify-content-between align-items-center">
 
-            <!-- Left links -->
             <div class="d-flex align-items-center">
                 <a asp-controller="Home" asp-action="Index" class="navbar-brand fw-bold me-3">
                     <i class="bi bi-shop"></i> BiasharaPOS
                 </a>
-                <ul class="navbar-nav me-auto d-flex flex-row">
-                    <li class="nav-item me-2">
-                        <a asp-controller="Home" asp-action="Index" class="nav-link">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a asp-controller="Home" asp-action="Privacy" class="nav-link">Privacy</a>
-                    </li>
-                </ul>
             </div>
 
-            <!-- Right links -->
             <div class="d-flex align-items-center">
-                <!-- Notifications -->
-                <div class="dropdown me-3">
-                    <a class="position-relative nav-link" data-bs-toggle="dropdown" style="cursor:pointer;">
-                        <i class="bi bi-bell fs-5"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge bg-danger rounded-pill">
-                            0
-                        </span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow">
-                        <li class="dropdown-header fw-bold">Notifications</li>
-                        <li><a class="dropdown-item" href="#">Low Stock Alert</a></li>
-                        <li><a class="dropdown-item" href="#">New Sale Recorded</a></li>
-                        <li><a class="dropdown-item" href="#">System Update</a></li>
-                    </ul>
-                </div>
-
-                <!-- Login/Register -->
                 <partial name="_LoginPartial" />
             </div>
 
@@ -62,67 +35,95 @@
     <div class="d-flex">
 
         <!-- ===== SIDEBAR ===== -->
-        <aside class="sidebar bg-dark text-white p-3 sticky-top vh-100">
-            <h5 class="fw-bold text-center mb-4"><i class="bi bi-speedometer2"></i> Admin Panel</h5>
+        <aside class="sidebar bg-dark text-white p-3 sticky-top vh-100 d-flex flex-column">
+            <h5 class="fw-bold text-center mb-4">
+                <i class="bi bi-speedometer2"></i> Admin Panel
+            </h5>
 
             <ul class="nav nav-pills flex-column mb-auto">
 
+                <!-- Dashboard -->
                 <li class="nav-item">
-                    <a asp-controller="Home" asp-action="Index" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
+                    <a asp-controller="Home" asp-action="Index"
+                       class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")">
                         <i class="bi bi-grid"></i> Dashboard
                     </a>
                 </li>
 
-                <div class="section-title">Management</div>
+                <!-- Management Section -->
+                <li class="nav-item mt-3 text-uppercase text-secondary small fw-bold ps-3">Management</li>
+
                 <li class="nav-item">
-                    <a asp-controller="Company" asp-action="Index" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Company" ? "active" : "")">
+                    <a asp-controller="Company" asp-action="Index"
+                       class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Company" ? "active" : "")">
                         <i class="bi bi-building"></i> Companies
                     </a>
                 </li>
+
                 <li class="nav-item">
-                    <a asp-controller="Branch" asp-action="Index" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Branch" ? "active" : "")">
+                    <a asp-controller="Branch" asp-action="Index"
+                       class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Branch" ? "active" : "")">
                         <i class="bi bi-diagram-3"></i> Branches
                     </a>
                 </li>
 
-                <div class="section-title">Inventory</div>
-                <li>
-                    <a class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "StockCategory" || ViewContext.RouteData.Values["Controller"]?.ToString() == "StockSubCategory" ? "active" : "")"
-                       data-bs-toggle="collapse" href="#inventoryMenu">
-                        <i class="bi bi-box-seam"></i> Inventory <i class="bi bi-chevron-down float-end"></i>
+                <!-- Inventory Section -->
+                <li class="nav-item mt-3 text-uppercase text-secondary small fw-bold ps-3">Inventory</li>
+
+                @{
+                    var inventoryControllers = new[] { "StockCategory", "StockSubCategory", "StockMeasure" };
+                    var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+                    var isInventoryActive = inventoryControllers.Contains(currentController);
+                }
+
+                <li class="nav-item">
+                    <a class="nav-link text-white d-flex justify-content-between align-items-center @(isInventoryActive ? "active" : "")"
+                       data-bs-toggle="collapse" href="#inventoryMenu" role="button" aria-expanded="@(isInventoryActive ? "true" : "false")">
+                        <span><i class="bi bi-box-seam"></i> Inventory</span>
+                        <i class="bi bi-chevron-down"></i>
                     </a>
-                    <div class="collapse @(ViewContext.RouteData.Values["Controller"]?.ToString() == "StockCategory" || ViewContext.RouteData.Values["Controller"]?.ToString() == "StockSubCategory" ? "show" : "")" id="inventoryMenu">
-                        <ul class="list-unstyled ps-3">
-                            <li>
-                                <a asp-controller="StockCategory" asp-action="Index"
-                                   class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "StockCategory" ? "active" : "")">
-                                    Stock Categories
-                                </a>
-                            </li>
-                            <li>
-                                <a asp-controller="StockSubCategory" asp-action="Index"
-                                   class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "StockSubCategory" ? "active" : "")">
-                                    Stock Sub Categories
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+
+                    <ul class="collapse list-unstyled ps-3 @(isInventoryActive ? "show" : "")" id="inventoryMenu">
+                        <li>
+                            <a asp-controller="StockCategory" asp-action="Index"
+                               class="nav-link text-white @(currentController == "StockCategory" ? "active" : "")">
+                                Stock Categories
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="StockSubCategory" asp-action="Index"
+                               class="nav-link text-white @(currentController == "StockSubCategory" ? "active" : "")">
+                                Stock Sub Categories
+                            </a>
+                        </li>
+                        <li>
+                            <a asp-controller="StockMeasure" asp-action="Index"
+                               class="nav-link text-white @(currentController == "StockMeasure" ? "active" : "")">
+                                Stock Measures (Units)
+                            </a>
+                        </li>
+                    </ul>
                 </li>
 
-                <li>
-                    <a asp-controller="Product" asp-action="Index" class="nav-link text-white @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Product" ? "active" : "")">
+                <!-- Products -->
+                <li class="nav-item mt-2">
+                    <a asp-controller="Product" asp-action="Index"
+                       class="nav-link text-white @(currentController == "Product" ? "active" : "")">
                         <i class="bi bi-box"></i> Products
                     </a>
                 </li>
 
-                <li>
-                    <a href="#" class="nav-link text-white">
+                <!-- Sales -->
+                <li class="nav-item">
+                    <a asp-controller="Sales" asp-action="Index"
+                       class="nav-link text-white @(currentController == "Sales" ? "active" : "")">
                         <i class="bi bi-cart"></i> Sales
                     </a>
                 </li>
+
             </ul>
 
-            <!-- Logout pinned bottom -->
+            <!-- Logout -->
             <div class="mt-auto">
                 <hr class="text-secondary" />
                 <a href="#" class="nav-link text-danger">
@@ -142,7 +143,13 @@
         &copy; @currentYear - BiasharaPOS
     </footer>
 
+    <!-- 🔥 REQUIRED FOR VALIDATION -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

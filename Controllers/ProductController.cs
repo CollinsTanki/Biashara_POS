@@ -47,6 +47,10 @@ namespace Biashara_POS.Controllers
                 })
                 .ToListAsync();
 
+            // Pass TempData messages to ViewBag for display in Index view
+            ViewBag.SuccessMessage = TempData["SuccessMessage"];
+            ViewBag.ErrorMessage = TempData["ErrorMessage"];
+
             return View(productDtos);
         }
 
@@ -66,52 +70,61 @@ namespace Biashara_POS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductDto productDto)
         {
-            if (!ModelState.IsValid)
+            try
             {
+                if (!ModelState.IsValid)
+                {
+                    LoadDropdowns();
+                    return View(productDto);
+                }
+
+                var product = new Product
+                {
+                    ProductName = productDto.ProductName,
+                    Barcode = productDto.Barcode,
+                    IsActive = productDto.IsActive,
+                    StockCategoryId = productDto.StockCategoryId,
+                    StockSubCategoryId = productDto.StockSubCategoryId,
+                    StockMeasureId = productDto.StockMeasureId,
+                    VatSetupId = productDto.VatSetupId,
+                    BuyingPrice = productDto.BuyingPrice,
+                    SellingPrice = productDto.SellingPrice,
+                    ReorderLevel = productDto.ReorderLevel
+                };
+
+                // -------------------------
+                // HANDLE IMAGE UPLOAD
+                // -------------------------
+                if (productDto.ImageFile != null && productDto.ImageFile.Length > 0)
+                {
+                    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/products");
+                    Directory.CreateDirectory(uploadsFolder); // ensure folder exists
+
+                    var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(productDto.ImageFile.FileName);
+                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await productDto.ImageFile.CopyToAsync(stream);
+                    }
+
+                    product.ImagePath = "/images/products/" + uniqueFileName;
+                }
+
+                context.Products.Add(product);
+                await context.SaveChangesAsync();
+
+                // Success message
+                TempData["SuccessMessage"] = "Product created successfully!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                // Log exception here if needed
+                TempData["ErrorMessage"] = "Error creating product: " + ex.Message;
                 LoadDropdowns();
                 return View(productDto);
             }
-
-            var product = new Product
-            {
-                ProductName = productDto.ProductName,
-                Barcode = productDto.Barcode,
-                IsActive = productDto.IsActive,
-                StockCategoryId = productDto.StockCategoryId,
-                StockSubCategoryId = productDto.StockSubCategoryId,
-                StockMeasureId = productDto.StockMeasureId,
-                VatSetupId = productDto.VatSetupId,
-                BuyingPrice = productDto.BuyingPrice,
-                SellingPrice = productDto.SellingPrice,
-                ReorderLevel = productDto.ReorderLevel
-            };
-
-            // -------------------------
-            // HANDLE IMAGE UPLOAD
-            // -------------------------
-            if (productDto.ImageFile != null && productDto.ImageFile.Length > 0)
-            {
-                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/products");
-                Directory.CreateDirectory(uploadsFolder); // ensure folder exists
-
-                // create a unique filename to prevent collisions
-                var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(productDto.ImageFile.FileName);
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                // save the file
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await productDto.ImageFile.CopyToAsync(stream);
-                }
-
-                // store relative path in DB
-                product.ImagePath = "/images/products/" + uniqueFileName;
-            }
-
-            context.Products.Add(product);
-            await context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
         }
 
         // ============================

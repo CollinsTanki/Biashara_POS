@@ -48,18 +48,40 @@ namespace Biashara_POS.Controllers
         public async Task<IActionResult> Create(CreateStockCategoryDto dto)
         {
             if (!ModelState.IsValid)
-                return View(dto);
-
-            var entity = new StockCategory
             {
-                CategoryName = dto.CategoryName,
-                IsActive = true
-            };
+                TempData["Error"] = "Please correct the form errors.";
+                return View(dto);
+            }
 
-            _context.StockCategories.Add(entity);
-            await _context.SaveChangesAsync();
+            try
+            {
+                // 🔥 Duplicate check
+                var exists = await _context.StockCategories
+                    .AnyAsync(x => x.CategoryName.ToLower() == dto.CategoryName.ToLower());
 
-            return RedirectToAction(nameof(Index));
+                if (exists)
+                {
+                    ModelState.AddModelError("", "Category already exists.");
+                    return View(dto);
+                }
+
+                var entity = new StockCategory
+                {
+                    CategoryName = dto.CategoryName.Trim(),
+                    IsActive = true
+                };
+
+                _context.StockCategories.Add(entity);
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Stock Category created successfully.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                TempData["Error"] = "Something went wrong while creating the category.";
+                return View(dto);
+            }
         }
 
         // =============================
@@ -68,7 +90,11 @@ namespace Biashara_POS.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var category = await _context.StockCategories.FindAsync(id);
-            if (category == null) return NotFound();
+            if (category == null)
+            {
+                TempData["Error"] = "Category not found.";
+                return RedirectToAction(nameof(Index));
+            }
 
             var dto = new StockCategoryDto
             {
@@ -88,17 +114,44 @@ namespace Biashara_POS.Controllers
         public async Task<IActionResult> Edit(StockCategoryDto dto)
         {
             if (!ModelState.IsValid)
+            {
+                TempData["Error"] = "Please correct the form errors.";
                 return View(dto);
+            }
 
-            var entity = await _context.StockCategories.FindAsync(dto.StockCategoryId);
-            if (entity == null) return NotFound();
+            try
+            {
+                var entity = await _context.StockCategories.FindAsync(dto.StockCategoryId);
+                if (entity == null)
+                {
+                    TempData["Error"] = "Category not found.";
+                    return RedirectToAction(nameof(Index));
+                }
 
-            entity.CategoryName = dto.CategoryName;
-            entity.IsActive = dto.IsActive;
+                // 🔥 Duplicate check (excluding current record)
+                var exists = await _context.StockCategories
+                    .AnyAsync(x => x.CategoryName.ToLower() == dto.CategoryName.ToLower()
+                                   && x.StockCategoryId != dto.StockCategoryId);
 
-            await _context.SaveChangesAsync();
+                if (exists)
+                {
+                    ModelState.AddModelError("", "Another category with this name already exists.");
+                    return View(dto);
+                }
 
-            return RedirectToAction(nameof(Index));
+                entity.CategoryName = dto.CategoryName.Trim();
+                entity.IsActive = dto.IsActive;
+
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Stock Category updated successfully.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                TempData["Error"] = "Something went wrong while updating the category.";
+                return View(dto);
+            }
         }
     }
 }

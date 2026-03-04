@@ -4,43 +4,75 @@
     ViewData["Title"] = "Stock Sub Categories";
 }
 
-<h2>@ViewData["Title"]</h2>
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+<!-- 🔥 SUCCESS & ERROR ALERTS -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-check-circle me-2"></i>
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 
 <a asp-action="Create" class="btn btn-primary mb-3">
     <i class="bi bi-plus-circle"></i> Add New Sub Category
 </a>
 
-<table class="table table-bordered table-striped table-hover">
+<table class="table table-bordered table-striped table-hover shadow-sm">
     <thead class="table-light">
         <tr>
             <th>#</th>
             <th>Sub Category Name</th>
             <th>Category</th>
-            <th>Is Active</th>
+            <th>Status</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @if (Model.Any())
+        {
+            int count = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@count</td>
+                    <td>@item.SubCategoryName</td>
+                    <td>@item.CategoryName</td>
+                    <td>
+                        @if (item.IsActive)
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Inactive</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.StockSubCategoryId" class="btn btn-sm btn-warning">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                    </td>
+                </tr>
+                count++;
+            }
+        }
+        else
         {
             <tr>
-                <td>@item.StockSubCategoryId</td>
-                <td>@item.SubCategoryName</td>
-                <td>@item.CategoryName</td>
-                <td>
-                    @if (item.IsActive)
-                    {
-                        <span class="badge bg-success">Active</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-secondary">Inactive</span>
-                    }
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.StockSubCategoryId" class="btn btn-sm btn-warning">
-                        <i class="bi bi-pencil"></i> Edit
-                    </a>
+                <td colspan="5" class="text-center">
+                    No Stock Sub Categories found.
                 </td>
             </tr>
         }

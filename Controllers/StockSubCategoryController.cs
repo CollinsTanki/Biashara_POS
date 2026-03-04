@@ -55,21 +55,44 @@ namespace Biashara_POS.Controllers
         {
             if (!ModelState.IsValid)
             {
+                TempData["Error"] = "Please correct the form errors.";
                 await LoadCategories();
                 return View(dto);
             }
 
-            var entity = new StockSubCategory
+            try
             {
-                StockCategoryId = dto.StockCategoryId,
-                SubCategoryName = dto.SubCategoryName,
-                IsActive = true
-            };
+                // Duplicate check
+                var exists = await _context.StockSubCategories
+                    .AnyAsync(x => x.SubCategoryName.ToLower() == dto.SubCategoryName.ToLower()
+                                   && x.StockCategoryId == dto.StockCategoryId);
 
-            _context.StockSubCategories.Add(entity);
-            await _context.SaveChangesAsync();
+                if (exists)
+                {
+                    ModelState.AddModelError("", "Subcategory already exists in the selected category.");
+                    await LoadCategories();
+                    return View(dto);
+                }
 
-            return RedirectToAction(nameof(Index));
+                var entity = new StockSubCategory
+                {
+                    StockCategoryId = dto.StockCategoryId,
+                    SubCategoryName = dto.SubCategoryName.Trim(),
+                    IsActive = true
+                };
+
+                _context.StockSubCategories.Add(entity);
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Stock Subcategory created successfully.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                TempData["Error"] = "Something went wrong while creating the subcategory.";
+                await LoadCategories();
+                return View(dto);
+            }
         }
 
         // =============================
@@ -78,7 +101,11 @@ namespace Biashara_POS.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var entity = await _context.StockSubCategories.FindAsync(id);
-            if (entity == null) return NotFound();
+            if (entity == null)
+            {
+                TempData["Error"] = "Subcategory not found.";
+                return RedirectToAction(nameof(Index));
+            }
 
             var dto = new StockSubCategoryDto
             {
@@ -101,20 +128,48 @@ namespace Biashara_POS.Controllers
         {
             if (!ModelState.IsValid)
             {
+                TempData["Error"] = "Please correct the form errors.";
                 await LoadCategories();
                 return View(dto);
             }
 
-            var entity = await _context.StockSubCategories.FindAsync(dto.StockSubCategoryId);
-            if (entity == null) return NotFound();
+            try
+            {
+                var entity = await _context.StockSubCategories.FindAsync(dto.StockSubCategoryId);
+                if (entity == null)
+                {
+                    TempData["Error"] = "Subcategory not found.";
+                    return RedirectToAction(nameof(Index));
+                }
 
-            entity.StockCategoryId = dto.StockCategoryId;
-            entity.SubCategoryName = dto.SubCategoryName;
-            entity.IsActive = dto.IsActive;
+                // Duplicate check (excluding current record)
+                var exists = await _context.StockSubCategories
+                    .AnyAsync(x => x.SubCategoryName.ToLower() == dto.SubCategoryName.ToLower()
+                                   && x.StockCategoryId == dto.StockCategoryId
+                                   && x.StockSubCategoryId != dto.StockSubCategoryId);
 
-            await _context.SaveChangesAsync();
+                if (exists)
+                {
+                    ModelState.AddModelError("", "Another subcategory with this name already exists in the selected category.");
+                    await LoadCategories();
+                    return View(dto);
+                }
 
-            return RedirectToAction(nameof(Index));
+                entity.StockCategoryId = dto.StockCategoryId;
+                entity.SubCategoryName = dto.SubCategoryName.Trim();
+                entity.IsActive = dto.IsActive;
+
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Stock Subcategory updated successfully.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                TempData["Error"] = "Something went wrong while updating the subcategory.";
+                await LoadCategories();
+                return View(dto);
+            }
         }
 
         // =============================
@@ -129,5 +184,5 @@ namespace Biashara_POS.Controllers
                 "StockCategoryId",
                 "CategoryName");
         }
-    }    
+    }
 }
