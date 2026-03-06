@@ -1,0 +1,39 @@
+﻿/*.product-img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+}*/
+.product-img {
+    max-height: 80px;
+    width: auto;
+    object-fit: cover;
+}
+/* =============================== */
+/* Product Image Preview & Table CSS */
+/* =============================== */
+
+#imagePreview {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.table img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.no-image-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    font-size: 28px;
+    color: #bbb;
+}

@@ -1,0 +1,38 @@
+﻿@model Biashara_POS.DTOs.VatSetupDto
+
+@{
+    ViewData["Title"] = "Create VAT";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h4 class="mb-3">Create VAT</h4>
+
+            <form asp-action="Create" method="post">
+                <div class="mb-3">
+                    <label class="form-label">VAT Name</label>
+                    <input asp-for="VatName" class="form-control" />
+                    <span asp-validation-for="VatName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">VAT Initials</label>
+                    <input asp-for="VatInitials" class="form-control" />
+                    <span asp-validation-for="VatInitials" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Tax Rate (%)</label>
+                    <input asp-for="TaxRate" class="form-control" />
+                    <span asp-validation-for="TaxRate" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-success">Save</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </form>
+
+        </div>
+    </div>
+</div>

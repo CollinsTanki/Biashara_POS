@@ -1,10 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Biashara_POS.Models
+namespace Biashara_POS.DTOs
 {
-    public class VatSetup
+    public class VatSetupDto
     {
-        [Key]
         public int VatSetupId { get; set; }
 
         [Required]
@@ -18,7 +17,6 @@ namespace Biashara_POS.Models
         [Range(0, 100)]
         public decimal TaxRate { get; set; }
 
-        // ✅ NEW
         public bool IsActive { get; set; } = true;
     }
 }

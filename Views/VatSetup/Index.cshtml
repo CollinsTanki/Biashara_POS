@@ -1,0 +1,153 @@
+﻿@model IEnumerable<Biashara_POS.DTOs.VatSetupViewDto>
+
+@{
+    ViewData["Title"] = "VAT Setup";
+}
+
+<div class="container mt-4">
+
+    <!-- ===================== ALERTS ===================== -->
+    @if (ViewBag.SuccessMessage != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @ViewBag.SuccessMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @ViewBag.ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- ===================== HEADER ===================== -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold mb-0">VAT List</h3>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add VAT
+        </a>
+    </div>
+
+    <!-- ===================== TABLE CARD ===================== -->
+    <div class="card shadow-sm">
+        <div class="card-body table-responsive">
+
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>Name</th>
+                        <th>Initials</th>
+                        <th class="text-end">Tax Rate (%)</th>
+                        <th class="text-center">Status</th>
+                        <th width="220" class="text-center">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.VatName</td>
+                                <td>@item.VatInitials</td>
+                                <td class="text-end">@item.TaxRate.ToString("N2") %</td>
+
+                                <!-- STATUS BADGE -->
+                                <td class="text-center">
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge bg-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    }
+                                </td>
+
+                                <!-- ACTION BUTTONS -->
+                                <td class="text-center">
+
+                                    <!-- EDIT -->
+                                    <a asp-action="Edit"
+                                       asp-route-id="@item.VatSetupId"
+                                       class="btn btn-sm btn-warning">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                    <!-- TOGGLE STATUS -->
+                                    <a asp-action="ToggleStatus"
+                                       asp-route-id="@item.VatSetupId"
+                                       class="btn btn-sm btn-info text-white">
+                                        <i class="bi bi-arrow-repeat"></i>
+                                    </a>
+
+                                    <!-- DELETE BUTTON -->
+                                    <button class="btn btn-sm btn-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal-@item.VatSetupId">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+
+                                    <!-- DELETE MODAL -->
+                                    <div class="modal fade"
+                                         id="deleteModal-@item.VatSetupId"
+                                         tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+
+                                                <div class="modal-header bg-danger text-white">
+                                                    <h5 class="modal-title">Confirm Delete</h5>
+                                                    <button type="button"
+                                                            class="btn-close"
+                                                            data-bs-dismiss="modal">
+                                                    </button>
+                                                </div>
+
+                                                <div class="modal-body">
+                                                    Are you sure you want to delete
+                                                    <strong>@item.VatName (@item.VatInitials)</strong>?
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <form asp-action="Delete" method="post">
+                                                        <input type="hidden"
+                                                               name="id"
+                                                               value="@item.VatSetupId" />
+                                                        <button type="submit"
+                                                                class="btn btn-danger">
+                                                            Yes, Delete
+                                                        </button>
+                                                        <button type="button"
+                                                                class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">
+                                                            Cancel
+                                                        </button>
+                                                    </form>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                No VAT records found.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>

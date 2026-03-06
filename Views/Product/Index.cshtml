@@ -6,14 +6,12 @@
 
 <div class="container-fluid mt-4">
 
-    <!-- =======================
-         SUCCESS & ERROR MESSAGES
-         ======================= -->
+    <!-- ===================== SUCCESS & ERROR MESSAGES ===================== -->
     @if (ViewBag.SuccessMessage != null)
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             @ViewBag.SuccessMessage
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
 
@@ -21,23 +19,28 @@
     {
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             @ViewBag.ErrorMessage
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
 
+    <!-- ===================== HEADER ===================== -->
     <div class="d-flex justify-content-between mb-3">
-        <h3 class="fw-bold">Product List</h3>
+        <h3 class="fw-bold">
+            <i class="bi bi-box-seam"></i> Product List
+        </h3>
         <a asp-action="Create" class="btn btn-primary">
             <i class="bi bi-plus-circle"></i> Add New Product
         </a>
     </div>
 
+    <!-- ===================== PRODUCT TABLE ===================== -->
     <div class="card shadow-sm">
         <div class="card-body table-responsive">
             <table class="table table-hover table-bordered align-middle">
+
                 <thead class="table-dark text-center">
                     <tr>
-                        <th>Image</th>
+                        <th style="width:80px;">Image</th>
                         <th>Name</th>
                         <th>Barcode</th>
                         <th>Category</th>
@@ -49,45 +52,68 @@
                         <th class="text-end">Profit</th>
                         <th class="text-center">Reorder</th>
                         <th class="text-center">Status</th>
-                        <th width="160" class="text-center">Actions</th>
+                        <th width="180" class="text-center">Actions</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    @if (Model.Any())
+                    @if (Model != null && Model.Any())
                     {
                         foreach (var item in Model)
                         {
                             bool isLowStock = item.ReorderLevel <= 5;
 
                             <tr class="@(isLowStock ? "table-warning" : "")">
-                                <!-- Product Image -->
+
+                                <!-- IMAGE -->
                                 <td class="text-center">
                                     @if (!string.IsNullOrEmpty(item.ImagePath))
                                     {
-                                        <img src="~/@item.ImagePath" alt="@item.ProductName"
-                                             class="img-thumbnail" style="width:60px; height:60px;" />
+                                        <img src="@item.ImagePath"
+                                             alt="@item.ProductName"
+                                             class="product-img img-thumbnail" />
                                     }
                                     else
                                     {
-                                        <span class="text-muted">No Image</span>
+                                        <div class="no-image-icon text-muted">
+                                            <i class="bi bi-image fs-3"></i>
+                                        </div>
                                     }
                                 </td>
 
-                                <td>@item.ProductName</td>
-                                <td>@item.Barcode</td>
+                                <!-- NAME -->
+                                <td class="fw-semibold">@item.ProductName</td>
+
+                                <!-- BARCODE -->
+                                <td>
+                                    <span class="badge bg-secondary">@item.Barcode</span>
+                                </td>
+
+                                <!-- CATEGORY -->
                                 <td>@item.CategoryName</td>
                                 <td>@item.SubCategoryName</td>
+
+                                <!-- MEASURE -->
                                 <td>@item.MeasureName</td>
+
+                                <!-- VAT -->
                                 <td>@item.VatName</td>
 
+                                <!-- BUYING PRICE -->
                                 <td class="text-end">@item.BuyingPrice.ToString("N2")</td>
+
+                                <!-- SELLING PRICE -->
                                 <td class="text-end">@item.SellingPrice.ToString("N2")</td>
+
+                                <!-- PROFIT -->
                                 <td class="text-end fw-bold @(item.Profit >= 0 ? "text-success" : "text-danger")">
                                     @item.Profit.ToString("N2")
                                 </td>
+
+                                <!-- REORDER LEVEL -->
                                 <td class="text-center">@item.ReorderLevel</td>
 
+                                <!-- STATUS -->
                                 <td class="text-center">
                                     @if (item.IsActive)
                                     {
@@ -99,25 +125,19 @@
                                     }
                                 </td>
 
+                                <!-- ACTION BUTTONS -->
                                 <td class="text-center">
-                                    <a asp-action="Edit"
-                                       asp-route-id="@item.ProductId"
-                                       class="btn btn-sm btn-warning">
-                                        <i class="bi bi-pencil"></i> Edit
+                                    <a asp-action="Edit" asp-route-id="@item.ProductId" class="btn btn-sm btn-warning">
+                                        <i class="bi bi-pencil"></i>
                                     </a>
-
-                                    <a asp-action="Details"
-                                       asp-route-id="@item.ProductId"
-                                       class="btn btn-sm btn-info text-white">
-                                        <i class="bi bi-eye"></i> Details
+                                    <a asp-action="Details" asp-route-id="@item.ProductId" class="btn btn-sm btn-info text-white">
+                                        <i class="bi bi-eye"></i>
                                     </a>
-
-                                    <a asp-action="Delete"
-                                       asp-route-id="@item.ProductId"
-                                       class="btn btn-sm btn-danger">
-                                        <i class="bi bi-trash"></i> Delete
+                                    <a asp-action="Delete" asp-route-id="@item.ProductId" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i>
                                     </a>
                                 </td>
+
                             </tr>
                         }
                     }
@@ -130,9 +150,24 @@
                         </tr>
                     }
                 </tbody>
+
             </table>
         </div>
     </div>
+
 </div>
 
+<!-- ===================== CUSTOM CSS ===================== -->
+<style>
+    .product-img {
+        max-height: 80px;
+        width: auto;
+    }
 
+    .no-image-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80px;
+    }
+</style>

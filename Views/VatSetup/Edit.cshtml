@@ -1,0 +1,48 @@
+﻿@model Biashara_POS.DTOs.VatSetupDto
+
+@{
+    ViewData["Title"] = "Edit VAT";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h4 class="mb-3">Edit VAT</h4>
+
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="VatSetupId" />
+
+                <div class="mb-3">
+                    <label class="form-label">VAT Name</label>
+                    <input asp-for="VatName" class="form-control" />
+                    <span asp-validation-for="VatName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">VAT Initials</label>
+                    <input asp-for="VatInitials" class="form-control" />
+                    <span asp-validation-for="VatInitials" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Tax Rate (%)</label>
+                    <input asp-for="TaxRate" class="form-control" />
+                    <span asp-validation-for="TaxRate" class="text-danger"></span>
+                </div>
+
+                <!-- ✅ NEW IsActive Toggle -->
+                <div class="form-check mb-3">
+                    <input asp-for="IsActive" class="form-check-input" />
+                    <label asp-for="IsActive" class="form-check-label">
+                        Active
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-success">Update</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </form>
+
+        </div>
+    </div>
+</div>
