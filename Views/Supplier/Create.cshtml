@@ -1,0 +1,50 @@
+﻿@model Biashara_POS.DTOs.SupplierCreateDto
+
+@{
+    ViewData["Title"] = "Create Supplier";
+}
+
+<div class="container mt-4">
+
+    <h2>Create Supplier</h2>
+    <hr />
+
+    <form asp-action="Create" method="post">
+
+        <div class="mb-3">
+            <label asp-for="SupplierName" class="form-label"></label>
+            <input asp-for="SupplierName" class="form-control" />
+            <span asp-validation-for="SupplierName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="PhoneNumber" class="form-label"></label>
+            <input asp-for="PhoneNumber" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Location" class="form-label"></label>
+            <input asp-for="Location" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Address" class="form-label"></label>
+            <textarea asp-for="Address" class="form-control"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-success">
+            Save Supplier
+        </button>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            Back to List
+        </a>
+
+    </form>
+
+</div>

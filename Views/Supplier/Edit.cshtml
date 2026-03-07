@@ -1,0 +1,52 @@
+﻿@model Biashara_POS.DTOs.SupplierCreateDto
+
+@{
+    ViewData["Title"] = "Edit Supplier";
+}
+
+<div class="container mt-4">
+
+    <h2>Edit Supplier</h2>
+    <hr />
+
+    <form asp-action="Edit" method="post">
+
+        <input type="hidden" asp-for="SupplierId" />
+
+        <div class="mb-3">
+            <label asp-for="SupplierName" class="form-label"></label>
+            <input asp-for="SupplierName" class="form-control" />
+            <span asp-validation-for="SupplierName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="PhoneNumber" class="form-label"></label>
+            <input asp-for="PhoneNumber" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Location" class="form-label"></label>
+            <input asp-for="Location" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Address" class="form-label"></label>
+            <textarea asp-for="Address" class="form-control"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Update Supplier
+        </button>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            Back to List
+        </a>
+
+    </form>
+
+</div>

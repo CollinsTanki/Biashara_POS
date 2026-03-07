@@ -1,0 +1,215 @@
+﻿@model IEnumerable<Biashara_POS.DTOs.SupplierViewDto>
+
+@{
+    ViewData["Title"] = "Suppliers";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between mb-3">
+        <h2>Suppliers</h2>
+
+        <a asp-action="Create" class="btn btn-primary">
+            + Add Supplier
+        </a>
+    </div>
+
+
+    <!-- SEARCH BOX -->
+
+    <form method="get" asp-action="Index" class="mb-3">
+
+        <div class="input-group">
+
+            <input type="text"
+                   name="searchString"
+                   value="@ViewBag.SearchString"
+                   class="form-control"
+                   placeholder="Search supplier..." />
+
+            <button type="submit" class="btn btn-dark">
+
+                Search
+
+            </button>
+
+        </div>
+
+    </form>
+
+
+    <table class="table table-bordered table-hover">
+
+        <thead class="table-dark">
+
+            <tr>
+
+                <th>Supplier</th>
+
+                <th>Phone</th>
+
+                <th>Email</th>
+
+                <th>Location</th>
+
+                <th>Purchases</th>
+
+                <th style="width:220px">Actions</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @if (Model.Any())
+
+            {
+
+                foreach (var supplier in Model)
+
+                {
+
+                    <tr>
+
+                        <td>@supplier.SupplierName</td>
+
+                        <td>@supplier.PhoneNumber</td>
+
+                        <td>@supplier.Email</td>
+
+                        <td>@supplier.Location</td>
+
+                        <td>
+
+                            <span class="badge bg-success">
+
+                                @supplier.PurchaseCount
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <a asp-action="Details"
+                               asp-route-id="@supplier.SupplierId"
+                               class="btn btn-info btn-sm">
+
+                                Details
+
+                            </a>
+
+                            <a asp-action="Edit"
+                               asp-route-id="@supplier.SupplierId"
+                               class="btn btn-warning btn-sm">
+
+                                Edit
+
+                            </a>
+
+                            <a asp-action="Delete"
+                               asp-route-id="@supplier.SupplierId"
+                               class="btn btn-danger btn-sm">
+
+                                Delete
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                }
+
+            }
+
+            else
+
+            {
+
+                <tr>
+
+                    <td colspan="6" class="text-center">
+
+                        No suppliers found
+
+                    </td>
+
+                </tr>
+
+            }
+
+        </tbody>
+
+    </table>
+
+
+    <!-- PAGINATION -->
+
+    <nav>
+
+        <ul class="pagination">
+
+            @if (ViewBag.CurrentPage > 1)
+
+            {
+
+                <li class="page-item">
+
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@(ViewBag.CurrentPage - 1)"
+                       asp-route-searchString="@ViewBag.SearchString">
+
+                        Previous
+
+                    </a>
+
+                </li>
+
+            }
+
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+
+            {
+
+                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@i"
+                       asp-route-searchString="@ViewBag.SearchString">
+
+                        @i
+
+                    </a>
+
+                </li>
+
+            }
+
+            @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+
+            {
+
+                <li class="page-item">
+
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@(ViewBag.CurrentPage + 1)"
+                       asp-route-searchString="@ViewBag.SearchString">
+
+                        Next
+
+                    </a>
+
+                </li>
+
+            }
+
+        </ul>
+
+    </nav>
+
+</div>
