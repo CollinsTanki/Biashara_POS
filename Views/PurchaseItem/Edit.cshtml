@@ -1,31 +1,47 @@
 ﻿@model Biashara_POS.DTOs.PurchaseItemEditDto
+@{
+    ViewData["Title"] = "Edit Purchase Item";
+}
 
-<h2>Edit Purchase Item</h2>
+<h2 class="mb-4"><i class="bi bi-pencil-square"></i> Edit Purchase Item</h2>
 
-<form asp-action="Edit">
+<form asp-action="Edit" method="post" class="row g-3">
+    <input type="hidden" asp-for="PurchaseItemId" />
 
-	<input type="hidden" asp-for="PurchaseItemId" />
+    <div class="col-md-6">
+        <label asp-for="PurchaseId" class="form-label"><i class="bi bi-bag-check"></i> Purchase</label>
+        <select asp-for="PurchaseId" asp-items="ViewBag.Purchases" class="form-select">
+            <option value="">-- Select Purchase --</option>
+        </select>
+        <span asp-validation-for="PurchaseId" class="text-danger"></span>
+    </div>
 
-	<div class="form-group">
-		<label>Purchase</label>
-		<select asp-for="PurchaseId" asp-items="@(new SelectList(ViewBag.Purchases,"PurchaseId","PurchaseId"))"></select>
-	</div>
+    <div class="col-md-6">
+        <label asp-for="ProductId" class="form-label"><i class="bi bi-box"></i> Product</label>
+        <select asp-for="ProductId" asp-items="ViewBag.Products" class="form-select">
+            <option value="">-- Select Product --</option>
+        </select>
+        <span asp-validation-for="ProductId" class="text-danger"></span>
+    </div>
 
-	<div class="form-group">
-		<label>Product</label>
-		<select asp-for="ProductId" asp-items="@(new SelectList(ViewBag.Products,"ProductId","ProductName"))"></select>
-	</div>
+    <div class="col-md-6">
+        <label asp-for="Quantity" class="form-label"><i class="bi bi-calculator"></i> Quantity</label>
+        <input asp-for="Quantity" class="form-control" type="number" min="1" />
+        <span asp-validation-for="Quantity" class="text-danger"></span>
+    </div>
 
-	<div class="form-group">
-		<label>Quantity</label>
-		<input asp-for="Quantity" class="form-control" />
-	</div>
+    <div class="col-md-6">
+        <label asp-for="UnitPrice" class="form-label"><i class="bi bi-currency-dollar"></i> Unit Price</label>
+        <input asp-for="UnitPrice" class="form-control" type="number" step="0.01" min="0" />
+        <span asp-validation-for="UnitPrice" class="text-danger"></span>
+    </div>
 
-	<div class="form-group">
-		<label>Unit Price</label>
-		<input asp-for="UnitPrice" class="form-control" />
-	</div>
-
-	<button type="submit" class="btn btn-success">Update</button>
-
+    <div class="col-12 text-end">
+        <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> Update</button>
+        <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-x-circle"></i> Cancel</a>
+    </div>
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -10,11 +10,9 @@ namespace Biashara_POS.DTOs
         // =============================
         public int ProductId { get; set; }
 
-
         // =============================
         // PRODUCT INFORMATION
         // =============================
-
         [Required(ErrorMessage = "Product name is required")]
         [StringLength(150)]
         [Display(Name = "Product Name")]
@@ -27,11 +25,9 @@ namespace Biashara_POS.DTOs
         [Display(Name = "Active Product")]
         public bool IsActive { get; set; } = true;
 
-
         // =============================
         // PRODUCT CLASSIFICATION
         // =============================
-
         [Required(ErrorMessage = "Category is required")]
         [Display(Name = "Category")]
         public int StockCategoryId { get; set; }
@@ -48,11 +44,9 @@ namespace Biashara_POS.DTOs
         [Display(Name = "VAT Setup")]
         public int VatSetupId { get; set; }
 
-
         // =============================
         // PRICING
         // =============================
-
         [Range(0, double.MaxValue, ErrorMessage = "Buying price must be positive")]
         [Display(Name = "Buying Price")]
         public decimal BuyingPrice { get; set; }
@@ -65,11 +59,18 @@ namespace Biashara_POS.DTOs
         [Display(Name = "Reorder Level")]
         public int ReorderLevel { get; set; }
 
+        // =============================
+        // STOCK
+        // =============================
+        [Display(Name = "Stock Quantity")]
+        public decimal StockQuantity { get; set; }
+
+        [Display(Name = "Low Stock Alert")]
+        public bool IsLowStock => StockQuantity <= ReorderLevel;
 
         // =============================
         // PRODUCT IMAGE
         // =============================
-
         // Stored in database
         [Display(Name = "Product Image")]
         public string? ImagePath { get; set; }
@@ -79,24 +80,17 @@ namespace Biashara_POS.DTOs
         [Display(Name = "Upload Image")]
         public IFormFile? ImageFile { get; set; }
 
-
         // =============================
         // DISPLAY FIELDS (Index View)
         // =============================
-
         public string? CategoryName { get; set; }
-
         public string? SubCategoryName { get; set; }
-
         public string? MeasureName { get; set; }
-
         public string? VatName { get; set; }
-
 
         // =============================
         // COMPUTED FIELD
         // =============================
-
         [Display(Name = "Profit")]
         public decimal Profit => SellingPrice - BuyingPrice;
     }

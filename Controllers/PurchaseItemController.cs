@@ -2,6 +2,7 @@
 using Biashara_POS.DTOs;
 using Biashara_POS.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Biashara_POS.Controllers
@@ -22,14 +23,15 @@ namespace Biashara_POS.Controllers
         {
             var items = await context.PurchaseItems
                 .Include(p => p.Product)
+                .Include(p => p.Purchase)
                 .Select(p => new PurchaseItemViewDto
                 {
                     PurchaseItemId = p.PurchaseItemId,
-                    PurchaseId = p.PurchaseId,
+                    PurchaseNumber = p.Purchase.PurchaseNumber,
                     ProductName = p.Product.ProductName,
                     Quantity = p.Quantity,
                     UnitPrice = p.UnitPrice,
-                    TotalPrice = p.Quantity * p.UnitPrice
+                    Total = p.Quantity * p.UnitPrice
                 })
                 .ToListAsync();
 
@@ -41,9 +43,7 @@ namespace Biashara_POS.Controllers
         // =========================
         public async Task<IActionResult> Create()
         {
-            ViewBag.Products = await context.Products.ToListAsync();
-            ViewBag.Purchases = await context.Purchases.ToListAsync();
-
+            await LoadDropdownsAsync();
             return View();
         }
 
@@ -65,14 +65,22 @@ namespace Biashara_POS.Controllers
                 };
 
                 context.PurchaseItems.Add(item);
+
+                // Update product stock
+                var product = await context.Products.FindAsync(dto.ProductId);
+                if (product != null)
+                    product.StockQuantity += dto.Quantity;
+
                 await context.SaveChangesAsync();
+
+                // Update purchase total
+                await UpdatePurchaseTotal(dto.PurchaseId);
 
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Products = await context.Products.ToListAsync();
-            ViewBag.Purchases = await context.Purchases.ToListAsync();
-
+            // Reload dropdowns if validation fails
+            await LoadDropdownsAsync();
             return View(dto);
         }
 
@@ -82,7 +90,6 @@ namespace Biashara_POS.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var item = await context.PurchaseItems.FindAsync(id);
-
             if (item == null)
                 return NotFound();
 
@@ -95,9 +102,7 @@ namespace Biashara_POS.Controllers
                 UnitPrice = item.UnitPrice
             };
 
-            ViewBag.Products = await context.Products.ToListAsync();
-            ViewBag.Purchases = await context.Purchases.ToListAsync();
-
+            await LoadDropdownsAsync();
             return View(dto);
         }
 
@@ -114,9 +119,13 @@ namespace Biashara_POS.Controllers
             if (ModelState.IsValid)
             {
                 var item = await context.PurchaseItems.FindAsync(id);
-
                 if (item == null)
                     return NotFound();
+
+                // Adjust stock based on change
+                var product = await context.Products.FindAsync(dto.ProductId);
+                if (product != null)
+                    product.StockQuantity = product.StockQuantity - item.Quantity + dto.Quantity;
 
                 item.PurchaseId = dto.PurchaseId;
                 item.ProductId = dto.ProductId;
@@ -125,12 +134,12 @@ namespace Biashara_POS.Controllers
 
                 await context.SaveChangesAsync();
 
+                await UpdatePurchaseTotal(item.PurchaseId);
+
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Products = await context.Products.ToListAsync();
-            ViewBag.Purchases = await context.Purchases.ToListAsync();
-
+            await LoadDropdownsAsync();
             return View(dto);
         }
 
@@ -141,6 +150,7 @@ namespace Biashara_POS.Controllers
         {
             var item = await context.PurchaseItems
                 .Include(p => p.Product)
+                .Include(p => p.Purchase)
                 .FirstOrDefaultAsync(p => p.PurchaseItemId == id);
 
             if (item == null)
@@ -157,14 +167,56 @@ namespace Biashara_POS.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var item = await context.PurchaseItems.FindAsync(id);
-
             if (item != null)
             {
+                var product = await context.Products.FindAsync(item.ProductId);
+                if (product != null)
+                    product.StockQuantity -= item.Quantity;
+
+                int purchaseId = item.PurchaseId;
                 context.PurchaseItems.Remove(item);
                 await context.SaveChangesAsync();
+
+                await UpdatePurchaseTotal(purchaseId);
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        // =========================
+        // PRIVATE: Update Purchase Total
+        // =========================
+        private async Task UpdatePurchaseTotal(int purchaseId)
+        {
+            var purchase = await context.Purchases
+                .Include(p => p.PurchaseItems)
+                .FirstOrDefaultAsync(p => p.PurchaseId == purchaseId);
+
+            if (purchase != null)
+            {
+                purchase.TotalAmount = purchase.PurchaseItems.Sum(i => i.Quantity * i.UnitPrice);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        // =========================
+        // PRIVATE: Load dropdowns for Create/Edit
+        // =========================
+        private async Task LoadDropdownsAsync()
+        {
+            // Map Products to SelectList
+            ViewBag.Products = new SelectList(
+                await context.Products.OrderBy(p => p.ProductName).ToListAsync(),
+                "ProductId",
+                "ProductName"
+            );
+
+            // Map Purchases to SelectList
+            ViewBag.Purchases = new SelectList(
+                await context.Purchases.OrderByDescending(p => p.PurchaseDate).ToListAsync(),
+                "PurchaseId",
+                "PurchaseNumber"
+            );
         }
     }
 }

@@ -50,6 +50,7 @@
                         <th class="text-end">Buying</th>
                         <th class="text-end">Selling</th>
                         <th class="text-end">Profit</th>
+                        <th class="text-end">Stock Qty</th>
                         <th class="text-center">Reorder</th>
                         <th class="text-center">Status</th>
                         <th width="180" class="text-center">Actions</th>
@@ -61,9 +62,10 @@
                     {
                         foreach (var item in Model)
                         {
-                            bool isLowStock = item.ReorderLevel <= 5;
+                            // Low stock if StockQuantity <= ReorderLevel
+                            bool isLowStock = item.StockQuantity <= item.ReorderLevel;
 
-                            <tr class="@(isLowStock ? "table-warning" : "")">
+                            <tr class="@(isLowStock ? "table-danger" : "")">
 
                                 <!-- IMAGE -->
                                 <td class="text-center">
@@ -110,6 +112,11 @@
                                     @item.Profit.ToString("N2")
                                 </td>
 
+                                <!-- STOCK QUANTITY -->
+                                <td class="text-end fw-bold @(isLowStock ? "text-danger" : "")">
+                                    @item.StockQuantity
+                                </td>
+
                                 <!-- REORDER LEVEL -->
                                 <td class="text-center">@item.ReorderLevel</td>
 
@@ -144,7 +151,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="13" class="text-center text-muted">
+                            <td colspan="14" class="text-center text-muted">
                                 No products available.
                             </td>
                         </tr>
@@ -158,16 +165,23 @@
 </div>
 
 <!-- ===================== CUSTOM CSS ===================== -->
-<style>
-    .product-img {
-        max-height: 80px;
-        width: auto;
-    }
+@section Styles {
+    <style>
+        .product-img {
+            max-height: 80px;
+            width: auto;
+        }
 
-    .no-image-icon {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 80px;
-    }
-</style>
+        .no-image-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80px;
+        }
+
+        /* Low stock row highlight */
+        .table-danger {
+            background-color: #f8d7da !important;
+        }
+    </style>
+}

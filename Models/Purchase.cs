@@ -1,23 +1,48 @@
-﻿using Biashara_POS.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class Purchase
+namespace Biashara_POS.Models
 {
-    public int PurchaseId { get; set; }
+    public class Purchase
+    {
+        [Key]
+        public int PurchaseId { get; set; }
 
-    [Required]
-    public DateTime PurchaseDate { get; set; } = DateTime.Now;
+        // -----------------------------
+        // PURCHASE NUMBER (For receipts & tracking)
+        // -----------------------------
+        [Required]
+        [StringLength(20)]
+        public string PurchaseNumber { get; set; } = "";
 
-    [Required]
-    public int SupplierId { get; set; }
+        // -----------------------------
+        // PURCHASE DATE
+        // -----------------------------
+        [Required]
+        public DateTime PurchaseDate { get; set; } = DateTime.Now;
 
-    [Required]
-    [Range(0, double.MaxValue)]
-    public decimal TotalAmount { get; set; }
+        // -----------------------------
+        // SUPPLIER
+        // -----------------------------
+        [Required]
+        public int SupplierId { get; set; }
 
-    public bool IsCredit { get; set; } = false;
+        public Supplier Supplier { get; set; } = null!;
 
-    public Supplier Supplier { get; set; }
+        // -----------------------------
+        // TOTAL PURCHASE AMOUNT
+        // -----------------------------
+        [Required]
+        [Range(0, double.MaxValue)]
+        public decimal TotalAmount { get; set; }
 
-    public ICollection<PurchaseItem> PurchaseItems { get; set; } = new List<PurchaseItem>();
+        // -----------------------------
+        // CREDIT PURCHASE FLAG
+        // -----------------------------
+        public bool IsCredit { get; set; } = false;
+
+        // -----------------------------
+        // PURCHASE ITEMS
+        // -----------------------------
+        public ICollection<PurchaseItem> PurchaseItems { get; set; } = new List<PurchaseItem>();
+    }
 }

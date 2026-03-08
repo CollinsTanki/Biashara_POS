@@ -23,12 +23,26 @@ namespace Biashara_POS.Controllers
         // ============================
         public async Task<IActionResult> Index()
         {
-            var productDtos = await context.Products
+            // Preload products with related entities
+            var products = await context.Products
                 .Include(p => p.StockCategory)
                 .Include(p => p.StockSubCategory)
                 .Include(p => p.StockMeasure)
                 .Include(p => p.VatSetup)
-                .Select(p => new ProductDto
+                .ToListAsync();
+
+            // Preload purchase items grouped by ProductId
+            var purchaseSums = await context.PurchaseItems
+                .GroupBy(pi => pi.ProductId)
+                .Select(g => new { ProductId = g.Key, Quantity = g.Sum(pi => pi.Quantity) })
+                .ToListAsync();
+
+            // Map to DTO
+            var productDtos = products.Select(p =>
+            {
+                var stockQty = purchaseSums.FirstOrDefault(ps => ps.ProductId == p.ProductId)?.Quantity ?? 0;
+
+                return new ProductDto
                 {
                     ProductId = p.ProductId,
                     ProductName = p.ProductName,
@@ -37,13 +51,17 @@ namespace Biashara_POS.Controllers
                     BuyingPrice = p.BuyingPrice,
                     SellingPrice = p.SellingPrice,
                     ReorderLevel = p.ReorderLevel,
-                    CategoryName = p.StockCategory.CategoryName,
-                    SubCategoryName = p.StockSubCategory.SubCategoryName,
-                    MeasureName = p.StockMeasure.MeasureName,
-                    VatName = p.VatSetup.VatName,
+                    StockQuantity = stockQty,
+                    CategoryName = p.StockCategory?.CategoryName,
+                    SubCategoryName = p.StockSubCategory?.SubCategoryName,
+                    MeasureName = p.StockMeasure?.MeasureName,
+                    VatName = p.VatSetup?.VatName,
                     ImagePath = p.ImagePath
-                })
-                .ToListAsync();
+                };
+            }).ToList();
+
+            // Low stock products for dashboard / sidebar badge
+            ViewBag.LowStockProducts = productDtos.Where(p => p.IsLowStock).ToList();
 
             ViewBag.SuccessMessage = TempData["SuccessMessage"];
             ViewBag.ErrorMessage = TempData["ErrorMessage"];
@@ -75,9 +93,6 @@ namespace Biashara_POS.Controllers
                     return View(productDto);
                 }
 
-                // ---------------------------
-                // IMAGE VALIDATION
-                // ---------------------------
                 if (productDto.ImageFile == null || productDto.ImageFile.Length == 0)
                 {
                     ModelState.AddModelError("ImageFile", "Product image is required.");
@@ -85,9 +100,7 @@ namespace Biashara_POS.Controllers
                     return View(productDto);
                 }
 
-                // ---------------------------
-                // SAVE IMAGE
-                // ---------------------------
+                // Save image
                 string uploadsFolder = Path.Combine(environment.WebRootPath, "images/products");
                 if (!Directory.Exists(uploadsFolder))
                     Directory.CreateDirectory(uploadsFolder);
@@ -102,9 +115,7 @@ namespace Biashara_POS.Controllers
                     await productDto.ImageFile.CopyToAsync(stream);
                 }
 
-                // ---------------------------
-                // CREATE PRODUCT
-                // ---------------------------
+                // Create product entity
                 var product = new Product
                 {
                     ProductName = productDto.ProductName,
@@ -157,28 +168,24 @@ namespace Biashara_POS.Controllers
         // ============================
         private void LoadDropdowns()
         {
-            // Categories dropdown
             ViewBag.StockCategoryId = new SelectList(
                 context.StockCategories.OrderBy(c => c.CategoryName),
                 "StockCategoryId",
                 "CategoryName"
             );
 
-            // Subcategories dropdown empty initially — AJAX will populate dynamically
             ViewBag.StockSubCategoryId = new SelectList(
                 Enumerable.Empty<SelectListItem>(),
                 "Value",
                 "Text"
             );
 
-            // Measures dropdown
             ViewBag.StockMeasureId = new SelectList(
                 context.StockMeasures.OrderBy(m => m.MeasureName),
                 "StockMeasureId",
                 "MeasureName"
             );
 
-            // VAT setup dropdown
             ViewBag.VatSetupId = new SelectList(
                 context.VatSetups.OrderBy(v => v.VatName),
                 "VatSetupId",
