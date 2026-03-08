@@ -1,0 +1,14 @@
+﻿@model Biashara_POS.Models.PurchaseItem
+
+<h2>Delete Purchase Item</h2>
+
+<h4>Are you sure?</h4>
+
+<form asp-action="Delete">
+
+	<input type="hidden" asp-for="PurchaseItemId" />
+
+	<button type="submit" class="btn btn-danger">Delete</button>
+	<a asp-action="Index" class="btn btn-secondary">Cancel</a>
+
+</form>

@@ -21,19 +21,20 @@ namespace Biashara_POS.Models
         // QUANTITY & PRICE
         // --------------------
         [Required]
-        [Range(1, int.MaxValue)]
-        public int Quantity { get; set; }
+        [Range(0.01, double.MaxValue, ErrorMessage = "Quantity must be greater than 0")]
+        [Column(TypeName = "decimal(18,2)")]  // Ensures database stores decimals
+        public decimal Quantity { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]
-        [Range(0, double.MaxValue)]
+        [Range(0, double.MaxValue, ErrorMessage = "Unit price cannot be negative")]
         public decimal UnitPrice { get; set; }
 
         [NotMapped]
         public decimal Total => Quantity * UnitPrice;
 
         // --------------------
-        // NAVIGATION
+        // NAVIGATION PROPERTIES
         // --------------------
         public Purchase Purchase { get; set; } = null!;
         public Product Product { get; set; } = null!;

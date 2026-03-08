@@ -1,19 +1,23 @@
-﻿namespace Biashara_POS.Models
+﻿using Biashara_POS.Models;
+using System.ComponentModel.DataAnnotations;
+
+public class Purchase
 {
-    public class Purchase
-    {
-        public int PurchaseId { get; set; }
+    public int PurchaseId { get; set; }
 
-        public DateTime PurchaseDate { get; set; } = DateTime.Now;
+    [Required]
+    public DateTime PurchaseDate { get; set; } = DateTime.Now;
 
-        public int SupplierId { get; set; }
+    [Required]
+    public int SupplierId { get; set; }
 
-        public decimal TotalAmount { get; set; }
+    [Required]
+    [Range(0, double.MaxValue)]
+    public decimal TotalAmount { get; set; }
 
-        public bool IsCredit { get; set; }
+    public bool IsCredit { get; set; } = false;
 
-        public Supplier Supplier { get; set; } 
+    public Supplier Supplier { get; set; }
 
-        public ICollection<PurchaseItem> PurchaseItems { get; set; }
-    }
+    public ICollection<PurchaseItem> PurchaseItems { get; set; } = new List<PurchaseItem>();
 }

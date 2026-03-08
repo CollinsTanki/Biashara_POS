@@ -1,0 +1,29 @@
+﻿@model Biashara_POS.DTOs.PurchaseItemCreateDto
+
+<h2>Add Purchase Item</h2>
+
+<form asp-action="Create">
+
+    <div class="form-group">
+        <label>Purchase</label>
+        <select asp-for="PurchaseId" asp-items="@(new SelectList(ViewBag.Purchases,"PurchaseId","PurchaseId"))"></select>
+    </div>
+
+    <div class="form-group">
+        <label>Product</label>
+        <select asp-for="ProductId" asp-items="@(new SelectList(ViewBag.Products,"ProductId","ProductName"))"></select>
+    </div>
+
+    <div class="form-group">
+        <label>Quantity</label>
+        <input asp-for="Quantity" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Unit Price</label>
+        <input asp-for="UnitPrice" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+
+</form>

@@ -15,27 +15,12 @@ namespace Biashara_POS.Controllers
             this.context = context;
         }
 
-        // =============================
-        // GET: Supplier List (Search + Pagination)
-        // =============================
-        public async Task<IActionResult> Index(string searchString, int page = 1)
+        // ======================
+        // GET: Suppliers List
+        // ======================
+        public async Task<IActionResult> Index()
         {
-            int pageSize = 10;
-
-            var query = context.Suppliers.AsQueryable();
-
-            // Search functionality
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                query = query.Where(s =>
-                    s.SupplierName.Contains(searchString) ||
-                    s.PhoneNumber.Contains(searchString) ||
-                    s.Email.Contains(searchString));
-            }
-
-            var totalSuppliers = await query.CountAsync();
-
-            var suppliers = await query
+            var suppliers = await context.Suppliers
                 .Select(s => new SupplierViewDto
                 {
                     SupplierId = s.SupplierId,
@@ -43,39 +28,31 @@ namespace Biashara_POS.Controllers
                     PhoneNumber = s.PhoneNumber,
                     Email = s.Email,
                     Location = s.Location,
-                    Address = s.Address,
-                    PurchaseCount = s.Purchases.Count(),
-                    Balance = 0
+                    Address = s.Address
                 })
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
                 .ToListAsync();
-
-            ViewBag.CurrentPage = page;
-            ViewBag.TotalPages = (int)Math.Ceiling(totalSuppliers / (double)pageSize);
-            ViewBag.SearchString = searchString;
 
             return View(suppliers);
         }
 
-        // =============================
-        // GET: Supplier/Create
-        // =============================
+        // ======================
+        // GET: Create Supplier
+        // ======================
         public IActionResult Create()
         {
-            return View();
+            return View(new SupplierCreateDto());
         }
 
-        // =============================
-        // POST: Supplier/Create
-        // =============================
+        // ======================
+        // POST: Create Supplier
+        // ======================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SupplierCreateDto dto)
         {
             if (ModelState.IsValid)
             {
-                Supplier supplier = new Supplier
+                var supplier = new Supplier
                 {
                     SupplierName = dto.SupplierName,
                     PhoneNumber = dto.PhoneNumber,
@@ -93,35 +70,9 @@ namespace Biashara_POS.Controllers
             return View(dto);
         }
 
-        // =============================
-        // GET: Supplier/Details/5
-        // =============================
-        public async Task<IActionResult> Details(int id)
-        {
-            var supplier = await context.Suppliers
-                .Where(s => s.SupplierId == id)
-                .Select(s => new SupplierViewDto
-                {
-                    SupplierId = s.SupplierId,
-                    SupplierName = s.SupplierName,
-                    PhoneNumber = s.PhoneNumber,
-                    Email = s.Email,
-                    Location = s.Location,
-                    Address = s.Address,
-                    PurchaseCount = s.Purchases.Count(),
-                    Balance = 0
-                })
-                .FirstOrDefaultAsync();
-
-            if (supplier == null)
-                return NotFound();
-
-            return View(supplier);
-        }
-
-        // =============================
-        // GET: Supplier/Edit/5
-        // =============================
+        // ======================
+        // GET: Edit Supplier
+        // ======================
         public async Task<IActionResult> Edit(int id)
         {
             var supplier = await context.Suppliers.FindAsync(id);
@@ -142,9 +93,9 @@ namespace Biashara_POS.Controllers
             return View(dto);
         }
 
-        // =============================
-        // POST: Supplier/Edit/5
-        // =============================
+        // ======================
+        // POST: Edit Supplier
+        // ======================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, SupplierEditDto dto)
@@ -173,23 +124,13 @@ namespace Biashara_POS.Controllers
             return View(dto);
         }
 
-        // =============================
-        // GET: Supplier/Delete/5
-        // =============================
+        // ======================
+        // GET: Delete Supplier
+        // ======================
         public async Task<IActionResult> Delete(int id)
         {
             var supplier = await context.Suppliers
-                .Where(s => s.SupplierId == id)
-                .Select(s => new SupplierViewDto
-                {
-                    SupplierId = s.SupplierId,
-                    SupplierName = s.SupplierName,
-                    PhoneNumber = s.PhoneNumber,
-                    Email = s.Email,
-                    Location = s.Location,
-                    Address = s.Address
-                })
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(s => s.SupplierId == id);
 
             if (supplier == null)
                 return NotFound();
@@ -197,9 +138,9 @@ namespace Biashara_POS.Controllers
             return View(supplier);
         }
 
-        // =============================
-        // POST: Supplier/Delete
-        // =============================
+        // ======================
+        // POST: Delete Supplier
+        // ======================
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
