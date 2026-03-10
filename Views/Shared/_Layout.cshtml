@@ -1,8 +1,25 @@
 ﻿@{
     var currentYear = DateTime.Now.Year;
+
     int lowStockCount = ViewBag.LowStockCount != null ? (int)ViewBag.LowStockCount : 0;
     int unreadMessages = ViewBag.UnreadMessages != null ? (int)ViewBag.UnreadMessages : 0;
     int unreadNotifications = ViewBag.UnreadNotifications != null ? (int)ViewBag.UnreadNotifications : 0;
+
+    var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+
+    var inventoryControllers = new[]
+    {
+        "StockCategory","StockSubCategory","StockMeasure",
+        "VatSetup","Product","Supplier","Purchase","PurchaseItem"
+    };
+
+    var salesControllers = new[]
+    {
+        "Sales","SaleItems"
+    };
+
+    var isInventoryActive = inventoryControllers.Contains(currentController);
+    var isSalesActive = salesControllers.Contains(currentController);
 }
 
 <!DOCTYPE html>
@@ -17,18 +34,17 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/products.css" asp-append-version="true" />
 
-    <!-- FIX FOR Styles SECTION ERROR -->
     @RenderSection("Styles", required: false)
 </head>
 
 <body class="d-flex flex-column min-vh-100">
 
-    <!-- HEADER -->
     <header class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top px-3">
+
         <div class="container-fluid d-flex justify-content-between align-items-center">
 
-            <!-- LOGO -->
             <div class="d-flex align-items-center">
+
                 <a asp-controller="Home" asp-action="Index" class="navbar-brand fw-bold me-4">
                     <i class="bi bi-shop"></i> BiasharaPOS
                 </a>
@@ -37,24 +53,23 @@
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Home</a>
                     </li>
+
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-controller="Home" asp-action="Contact">Contact</a>
                     </li>
+
                     <li class="nav-item">
                         <a class="nav-link text-dark" asp-controller="Home" asp-action="Privacy">Privacy</a>
                     </li>
                 </ul>
+
             </div>
 
-            <!-- RIGHT MENU -->
             <div class="d-flex align-items-center gap-3">
 
                 <!-- Messages -->
                 <div class="dropdown">
-                    <a class="btn btn-outline-secondary position-relative"
-                       href="#"
-                       data-bs-toggle="dropdown">
-
+                    <a class="btn btn-outline-secondary position-relative" href="#" data-bs-toggle="dropdown">
                         <i class="bi bi-envelope-fill"></i>
 
                         @if (unreadMessages > 0)
@@ -74,10 +89,7 @@
 
                 <!-- Notifications -->
                 <div class="dropdown">
-                    <a class="btn btn-outline-secondary position-relative"
-                       href="#"
-                       data-bs-toggle="dropdown">
-
+                    <a class="btn btn-outline-secondary position-relative" href="#" data-bs-toggle="dropdown">
                         <i class="bi bi-bell-fill"></i>
 
                         @if (unreadNotifications > 0)
@@ -104,40 +116,53 @@
                 </a>
 
             </div>
+
         </div>
+
     </header>
 
     <div class="d-flex flex-grow-1">
 
         <!-- SIDEBAR -->
-        <aside class="bg-dark text-white p-3 vh-100 flex-shrink-0">
+        <aside class="bg-dark text-white p-3 vh-100 flex-shrink-0" style="width:260px;">
 
             <h5 class="fw-bold text-center mb-4">
                 <i class="bi bi-speedometer2"></i> Admin Panel
             </h5>
 
-            @{
-                var inventoryControllers = new[]
-                {
-            "StockCategory","StockSubCategory","StockMeasure",
-            "VatSetup","Product","Supplier","Purchase","PurchaseItem"
-            };
-
-                var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
-                var isInventoryActive = inventoryControllers.Contains(currentController);
-            }
-
             <ul class="nav nav-pills flex-column mb-auto">
 
+                <!-- Dashboard -->
                 <li class="nav-item mb-2">
                     <a asp-controller="Home"
                        asp-action="Index"
                        class="nav-link text-white @(currentController=="Home"?"active":"")">
-
                         <i class="bi bi-grid"></i> Dashboard
                     </a>
                 </li>
 
+                <!-- MANAGEMENT -->
+                <li class="nav-item mt-3 text-uppercase text-secondary small fw-bold ps-3">
+                    Management
+                </li>
+
+                <li class="nav-item">
+                    <a asp-controller="Company"
+                       asp-action="Index"
+                       class="nav-link text-white @(currentController=="Company"?"active":"")">
+                        <i class="bi bi-building"></i> Companies
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a asp-controller="Branch"
+                       asp-action="Index"
+                       class="nav-link text-white @(currentController=="Branch"?"active":"")">
+                        <i class="bi bi-diagram-3"></i> Branches
+                    </a>
+                </li>
+
+                <!-- INVENTORY -->
                 <li class="nav-item mt-3 text-uppercase text-secondary small fw-bold ps-3">
                     Inventory
                 </li>
@@ -163,10 +188,41 @@
                     <ul class="collapse list-unstyled ps-3 @(isInventoryActive?"show":"")" id="inventoryMenu">
 
                         <li>
+                            <a asp-controller="StockCategory"
+                               asp-action="Index"
+                               class="nav-link text-white @(currentController=="StockCategory"?"active":"")">
+                                <i class="bi bi-list-ul"></i> Stock Categories
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="StockSubCategory"
+                               asp-action="Index"
+                               class="nav-link text-white @(currentController=="StockSubCategory"?"active":"")">
+                                <i class="bi bi-list"></i> Stock Sub Categories
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="StockMeasure"
+                               asp-action="Index"
+                               class="nav-link text-white @(currentController=="StockMeasure"?"active":"")">
+                                <i class="bi bi-rulers"></i> Stock Measures
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="VatSetup"
+                               asp-action="Index"
+                               class="nav-link text-white @(currentController=="VatSetup"?"active":"")">
+                                <i class="bi bi-percent"></i> VAT Setup
+                            </a>
+                        </li>
+
+                        <li>
                             <a asp-controller="Product"
                                asp-action="Index"
                                class="nav-link text-white @(currentController=="Product"?"active":"")">
-
                                 <i class="bi bi-box"></i> Products
                             </a>
                         </li>
@@ -175,7 +231,6 @@
                             <a asp-controller="Supplier"
                                asp-action="Index"
                                class="nav-link text-white @(currentController=="Supplier"?"active":"")">
-
                                 <i class="bi bi-truck"></i> Suppliers
                             </a>
                         </li>
@@ -184,7 +239,6 @@
                             <a asp-controller="Purchase"
                                asp-action="Index"
                                class="nav-link text-white @(currentController=="Purchase"?"active":"")">
-
                                 <i class="bi bi-bag-check"></i> Purchases
                             </a>
                         </li>
@@ -193,7 +247,6 @@
                             <a asp-controller="PurchaseItem"
                                asp-action="Index"
                                class="nav-link text-white @(currentController=="PurchaseItem"?"active":"")">
-
                                 <i class="bi bi-bag-plus"></i> Purchase Items
                             </a>
                         </li>
@@ -201,22 +254,61 @@
                     </ul>
                 </li>
 
-                <li class="nav-item mt-3">
-                    <a asp-controller="Sales"
-                       asp-action="Index"
-                       class="nav-link text-white @(currentController=="Sales"?"active":"")">
+                <!-- SALES -->
+                <li class="nav-item mt-3 text-uppercase text-secondary small fw-bold ps-3">
+                    Sales
+                </li>
 
-                        <i class="bi bi-cart"></i> Sales
+                <li class="nav-item">
+
+                    <a class="nav-link text-white d-flex justify-content-between align-items-center @(isSalesActive?"active":"")"
+                       data-bs-toggle="collapse"
+                       href="#salesMenu">
+
+                        <span>
+                            <i class="bi bi-cart"></i> Sales
+                        </span>
+
+                        <i class="bi bi-chevron-down"></i>
+
                     </a>
+
+                    <ul class="collapse list-unstyled ps-3 @(isSalesActive?"show":"")" id="salesMenu">
+
+                        <li>
+                            <a asp-controller="Sales"
+                               asp-action="Index"
+                               class="nav-link text-white @(currentController=="Sales"?"active":"")">
+
+                                <i class="bi bi-receipt"></i> Sales List
+
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="SaleItems"
+                               asp-action="Index"
+                               class="nav-link text-white @(currentController=="SaleItems"?"active":"")">
+
+                                <i class="bi bi-cart-plus"></i> Sale Items
+
+                            </a>
+                        </li>
+
+                    </ul>
+
                 </li>
 
             </ul>
 
             <div class="mt-auto">
+
                 <hr class="text-secondary" />
+
                 <a href="#" class="nav-link text-danger">
                     <i class="bi bi-box-arrow-right"></i> Logout
                 </a>
+
             </div>
 
         </aside>

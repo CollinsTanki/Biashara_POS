@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Biashara_POS.DTOs.SaleIndexDto>
+
+@{
+    ViewData["Title"] = "Sales";
+}
+
+<h2 class="mb-3">Sales List</h2>
+
+<a asp-action="Create" class="btn btn-primary mb-3">
+    <i class="bi bi-plus-circle"></i> New Sale
+</a>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Receipt</th>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Total</th>
+            <th>Balance</th>
+            <th>Credit Sale</th>
+            <th>Cashier</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var sale in Model)
+        {
+            <tr>
+                <td>@sale.ReceiptNumber</td>
+                <td>@sale.SaleDate.ToString("dd MMM yyyy HH:mm")</td>
+                <td>@sale.CustomerName</td>
+                <td>@sale.TotalAmount.ToString("N2")</td>
+                <td>@sale.Balance.ToString("N2")</td>
+                <td>
+                    @if (sale.IsCreditSale)
+                    {
+                        <span class="badge bg-warning text-dark">Credit</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Paid</span>
+                    }
+                </td>
+                <td>@sale.Cashier</td>
+
+                <td>
+                    <a asp-action="Edit" asp-route-id="@sale.SaleId"
+                       class="btn btn-sm btn-warning">
+                        Edit
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,110 @@
+﻿@model Biashara_POS.DTOs.SaleItemEditDto
+
+@{
+    ViewData["Title"] = "Edit Sale Item";
+}
+
+<div class="container mt-4">
+
+    <h3 class="mb-3">
+        <i class="bi bi-pencil-square text-warning"></i> Edit Sale Item
+    </h3>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <form asp-action="Edit">
+
+                <input type="hidden" asp-for="SaleItemId" />
+                <input type="hidden" asp-for="SaleId" />
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        <i class="bi bi-box"></i> Product
+                    </label>
+
+                    <select asp-for="ProductId"
+                            asp-items="ViewBag.Products"
+                            class="form-select">
+                    </select>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        <i class="bi bi-123"></i> Quantity
+                    </label>
+
+                    <input asp-for="Quantity" class="form-control" />
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        <i class="bi bi-cash"></i> Unit Price
+                    </label>
+
+                    <input asp-for="UnitPrice" class="form-control" />
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        <i class="bi bi-percent"></i> Discount
+                    </label>
+
+                    <input asp-for="Discount" class="form-control" />
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        <i class="bi bi-receipt"></i> VAT Amount
+                    </label>
+
+                    <input asp-for="VatAmount" class="form-control" />
+
+                </div>
+
+
+                <div class="mt-4">
+
+                    <button type="submit" class="btn btn-primary">
+
+                        <i class="bi bi-check-circle"></i> Update
+
+                    </button>
+
+                    <a asp-action="Index"
+                       asp-route-saleId="@Model.SaleId"
+                       class="btn btn-secondary">
+
+                        <i class="bi bi-arrow-left"></i> Back
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

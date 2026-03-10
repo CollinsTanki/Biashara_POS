@@ -11,7 +11,8 @@ namespace Biashara_POS.Models
         public string FullName { get; set; } = "";
 
         [MaxLength(20)]
-        public int PhoneNumber { get; set; }
+        [RegularExpression(@"^[0-9+]*$", ErrorMessage = "Invalid phone number")]
+        public string PhoneNumber { get; set; } = "";
 
         [MaxLength(200)]
         public string Location { get; set; } = "";
@@ -27,7 +28,7 @@ namespace Biashara_POS.Models
         public bool IsActive { get; set; } = true;
 
         // Navigation
-        public ICollection<Sale> Sales { get; set; }
+        public ICollection<Sale> Sales { get; set; } = new List<Sale>();
 
     }
 }

@@ -16,23 +16,50 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+
 // ===============================
 // IDENTITY CONFIGURATION
 // ===============================
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = true;
+    // Password Settings
+    options.Password.RequireDigit = true;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireNonAlphanumeric = false;
+
+    // User Settings
+    options.User.RequireUniqueEmail = true;
+
+    // Sign-in settings
+    options.SignIn.RequireConfirmedAccount = false;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
+
+
+// ===============================
+// COOKIE CONFIGURATION
+// ===============================
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Identity/Account/Login";
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.LogoutPath = "/Identity/Account/Logout";
+
+    options.ExpireTimeSpan = TimeSpan.FromHours(8);
+});
+
 
 // ===============================
 // ADD MVC + RAZOR PAGES
 // ===============================
 builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages(); // Required for Identity UI
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
+
 
 // ===============================
 // MIDDLEWARE PIPELINE
@@ -50,18 +77,20 @@ else
 app.UseHttpsRedirection();
 
 
-// ================================================
-// ✅ VERY IMPORTANT: ENABLE STATIC FILES HERE
-// This allows images, CSS, JS from wwwroot to work
-// Your company logos in wwwroot/images depend on this
-// ================================================
+// ===============================
+// STATIC FILES (CSS, JS, IMAGES)
+// ===============================
 app.UseStaticFiles();
-
 
 app.UseRouting();
 
+
+// ===============================
+// AUTHENTICATION + AUTHORIZATION
+// ===============================
 app.UseAuthentication();
 app.UseAuthorization();
+
 
 // ===============================
 // ROUTING
@@ -70,6 +99,8 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Required for Identity (Login, Register, etc.)
+
+// Required for Identity UI
 app.MapRazorPages();
+
 app.Run();
