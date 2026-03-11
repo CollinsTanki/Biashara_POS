@@ -48,8 +48,8 @@ namespace Biashara_POS.Models
         public Branch? Branch { get; set; }
 
 
-        // ---------------- SALES RELATION ----------------
+        // ---------------- RELATIONS ----------------
 
-        public ICollection<Sale>? Sales { get; set; }
+        public ICollection<Sale> Sales { get; set; } = new List<Sale>();
     }
 }

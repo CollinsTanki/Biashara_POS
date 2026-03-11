@@ -6,7 +6,7 @@
 
         public DateTime PurchaseDate { get; set; }
 
-        public string SupplierName { get; set; }
+        public string SupplierName { get; set; } = "";
 
         public decimal TotalAmount { get; set; }
 
