@@ -1,0 +1,48 @@
+﻿@model Biashara_POS.DTOs.GroupPermission.CreateGroupPermissionDto
+
+@{
+	ViewData["Title"] = "Create Group Permissions";
+}
+
+<h3>
+	<i class="bi bi-plus-circle"></i>
+	Create Permission
+</h3>
+
+<form asp-action="Create">
+
+	<div class="mb-3">
+		<label>User Group</label>
+		<select asp-for="UserGroupId" asp-items="ViewBag.Groups" class="form-control"></select>
+	</div>
+
+	<div class="mb-3">
+		<label>Function</label>
+		<select asp-for="AppFunctionId" asp-items="ViewBag.Functions" class="form-control"></select>
+	</div>
+
+	<div class="form-check">
+		<input asp-for="CanView" class="form-check-input" />
+		<label class="form-check-label">View</label>
+	</div>
+
+	<div class="form-check">
+		<input asp-for="CanCreate" class="form-check-input" />
+		<label>Create</label>
+	</div>
+
+	<div class="form-check">
+		<input asp-for="CanEdit" class="form-check-input" />
+		<label>Edit</label>
+	</div>
+
+	<div class="form-check">
+		<input asp-for="CanDelete" class="form-check-input" />
+		<label>Delete</label>
+	</div>
+
+	<button class="btn btn-success mt-3">
+		<i class="bi bi-save"></i> Save
+	</button>
+
+</form>

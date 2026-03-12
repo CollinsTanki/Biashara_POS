@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Biashara_POS.Controllers
 {
-    [Authorize(Roles = "Admin")]
+   // [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
@@ -24,18 +24,18 @@ namespace Biashara_POS.Controllers
         // ===============================
         // USERS LIST
         // ===============================
-
         public async Task<IActionResult> Index()
         {
             var users = await _userManager.Users
+                .Include(u => u.Branch)
                 .Select(u => new UserIndexDto
                 {
                     Id = u.Id,
                     FullName = u.FullName,
                     Email = u.Email!,
-                    Position = u.Position!,
+                    Position = u.Position,
                     IsActive = u.IsActive,
-                    Branch = u.Branch != null ? u.Branch.BranchName : ""
+                    Branch = u.Branch != null ? u.Branch.BranchName : string.Empty
                 })
                 .ToListAsync();
 
@@ -45,7 +45,6 @@ namespace Biashara_POS.Controllers
         // ===============================
         // CREATE USER
         // ===============================
-
         public IActionResult Create()
         {
             return View();
@@ -65,8 +64,8 @@ namespace Biashara_POS.Controllers
                 UserName = dto.Email,
                 Position = dto.Position,
                 Address = dto.Address,
-                BranchId = dto.BranchId,
-                UserGroupId = dto.UserGroupId,
+                BranchId = dto.BranchId,       // nullable now
+                UserGroupId = dto.UserGroupId, // nullable
                 IsActive = dto.IsActive,
                 CreatedAt = DateTime.Now
             };
@@ -77,7 +76,7 @@ namespace Biashara_POS.Controllers
                 return RedirectToAction(nameof(Index));
 
             foreach (var error in result.Errors)
-                ModelState.AddModelError("", error.Description);
+                ModelState.AddModelError(string.Empty, error.Description);
 
             return View(dto);
         }
@@ -85,7 +84,6 @@ namespace Biashara_POS.Controllers
         // ===============================
         // EDIT USER
         // ===============================
-
         public async Task<IActionResult> Edit(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -100,8 +98,8 @@ namespace Biashara_POS.Controllers
                 Email = user.Email!,
                 Position = user.Position,
                 Address = user.Address,
-                BranchId = user.BranchId,
-                UserGroupId = user.UserGroupId,
+                BranchId = user.BranchId,       // nullable
+                UserGroupId = user.UserGroupId, // nullable
                 IsActive = user.IsActive
             };
 
@@ -125,8 +123,8 @@ namespace Biashara_POS.Controllers
             user.UserName = dto.Email;
             user.Position = dto.Position;
             user.Address = dto.Address;
-            user.BranchId = dto.BranchId;
-            user.UserGroupId = dto.UserGroupId;
+            user.BranchId = dto.BranchId;        // nullable
+            user.UserGroupId = dto.UserGroupId;  // nullable
             user.IsActive = dto.IsActive;
 
             await _userManager.UpdateAsync(user);
@@ -137,7 +135,6 @@ namespace Biashara_POS.Controllers
         // ===============================
         // DELETE USER
         // ===============================
-
         public async Task<IActionResult> Delete(string id)
         {
             var user = await _userManager.FindByIdAsync(id);

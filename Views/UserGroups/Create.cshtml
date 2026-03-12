@@ -1,0 +1,48 @@
+﻿@model Biashara_POS.DTOs.UserGroup.CreateUserGroupDto
+
+@{
+    ViewData["Title"] = "User Groups";
+}
+
+<h3>
+    <i class="bi bi-person-plus-fill text-success"></i>
+    Create User Group
+</h3>
+
+<form asp-action="Create" method="post">
+
+    <div class="mb-3">
+
+        <label class="form-label">
+            <i class="bi bi-diagram-3"></i>
+            Group Name
+        </label>
+
+        <input asp-for="GroupName" class="form-control" />
+
+        <span asp-validation-for="GroupName" class="text-danger"></span>
+
+    </div>
+
+    <div class="mb-3">
+
+        <label class="form-label">
+            <i class="bi bi-card-text"></i>
+            Description
+        </label>
+
+        <textarea asp-for="Description" class="form-control"></textarea>
+
+    </div>
+
+    <button class="btn btn-success">
+        <i class="bi bi-save"></i>
+        Save
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i>
+        Back
+    </a>
+
+</form>

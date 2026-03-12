@@ -16,13 +16,13 @@ namespace Biashara_POS.DTOs
         public string BranchName { get; set; } = string.Empty;
 
         [MaxLength(200)]
-        public string Address { get; set; } = string.Empty;
+        public string? Address { get; set; }  // nullable, optional
 
         [MaxLength(20)]
         [Phone(ErrorMessage = "Invalid phone number")]
-        public string Phone { get; set; } = string.Empty;
+        public string? Phone { get; set; }  // nullable, optional
 
-        // ✅ Robust Email Validation - Accepts all valid TLDs
+        // Robust email validation
         [Required(ErrorMessage = "Email is required")]
         [MaxLength(150)]
         [RegularExpression(
@@ -32,7 +32,7 @@ namespace Biashara_POS.DTOs
         public string Email { get; set; } = string.Empty;
 
         [MaxLength(100)]
-        public string Location { get; set; } = string.Empty;
+        public string? Location { get; set; }  // nullable, optional
 
         [Display(Name = "Head Office")]
         public bool IsHQ { get; set; }

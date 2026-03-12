@@ -1,0 +1,92 @@
+﻿@model IEnumerable<Biashara_POS.DTOs.UserGroup.UserGroupDto>
+
+@{
+    ViewData["Title"] = "User Groups";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between mb-3">
+
+        <h3>
+            <i class="bi bi-people-fill text-primary"></i>
+            User Groups
+        </h3>
+
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-person-plus-fill"></i>
+            Create Group
+        </a>
+
+    </div>
+
+    <table class="table table-bordered table-hover">
+
+        <thead class="table-dark">
+            <tr>
+                <th>Group</th>
+                <th>Description</th>
+                <th><i class="bi bi-person"></i> Users</th>
+                <th><i class="bi bi-shield-lock"></i> Permissions</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+
+                    <td>
+                        <i class="bi bi-diagram-3"></i>
+                        @item.GroupName
+                    </td>
+
+                    <td>@item.Description</td>
+
+                    <td>
+                        <span class="badge bg-info">
+                            <i class="bi bi-person"></i>
+                            @item.UserCount
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="badge bg-secondary">
+                            <i class="bi bi-shield-lock"></i>
+                            @item.PermissionCount
+                        </span>
+                    </td>
+
+                    <td>
+
+                        @if (item.IsEditable)
+                        {
+                            <a asp-action="Edit"
+                               asp-route-id="@item.UserGroupId"
+                               class="btn btn-sm btn-warning">
+
+                                <i class="bi bi-pencil-square"></i>
+                                Edit
+                            </a>
+
+                            <a asp-action="Delete"
+                               asp-route-id="@item.UserGroupId"
+                               class="btn btn-sm btn-danger">
+
+                                <i class="bi bi-trash-fill"></i>
+                                Delete
+                            </a>
+                        }
+
+                    </td>
+
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+
+</div>

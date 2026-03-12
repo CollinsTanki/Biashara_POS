@@ -1,0 +1,44 @@
+﻿@model Biashara_POS.DTOs.GroupPermission.UpdateGroupPermissionDto
+
+@{
+	ViewData["Title"] = "Edit Group Permissions";
+}
+<h3>
+	<i class="bi bi-pencil-square"></i>
+	Edit Permission
+</h3>
+
+<form asp-action="Edit">
+
+	<input type="hidden" asp-for="GroupPermissionId" />
+
+	<select asp-for="UserGroupId" asp-items="ViewBag.Groups" class="form-control mb-2"></select>
+
+	<select asp-for="AppFunctionId" asp-items="ViewBag.Functions" class="form-control mb-3"></select>
+
+	<div class="form-check">
+		<input asp-for="CanView" class="form-check-input" />
+		<label>View</label>
+	</div>
+
+	<div class="form-check">
+		<input asp-for="CanCreate" class="form-check-input" />
+		<label>Create</label>
+	</div>
+
+	<div class="form-check">
+		<input asp-for="CanEdit" class="form-check-input" />
+		<label>Edit</label>
+	</div>
+
+	<div class="form-check">
+		<input asp-for="CanDelete" class="form-check-input" />
+		<label>Delete</label>
+	</div>
+
+	<button class="btn btn-primary mt-3">
+		<i class="bi bi-check-circle"></i>
+		Update
+	</button>
+
+</form>

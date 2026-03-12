@@ -1,6 +1,7 @@
 using Biashara_POS.Data;
 using Biashara_POS.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,8 +14,6 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
-
-builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -42,6 +41,12 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 
 
 // ===============================
+// FIX REGISTER CRASH (EMAIL SENDER)
+// ===============================
+builder.Services.AddSingleton<IEmailSender, DummyEmailSender>();
+
+
+// ===============================
 // COOKIE CONFIGURATION
 // ===============================
 builder.Services.ConfigureApplicationCookie(options =>
@@ -55,7 +60,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 
 // ===============================
-// ADD MVC + RAZOR PAGES
+// MVC + RAZOR PAGES
 // ===============================
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -80,7 +85,7 @@ app.UseHttpsRedirection();
 
 
 // ===============================
-// STATIC FILES (CSS, JS, IMAGES)
+// STATIC FILES
 // ===============================
 app.UseStaticFiles();
 
@@ -102,7 +107,20 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 
-// Required for Identity UI
+// Identity Razor Pages
 app.MapRazorPages();
 
 app.Run();
+
+
+// ======================================================
+// DUMMY EMAIL SENDER (PREVENTS REGISTER PAGE CRASH)
+// ======================================================
+public class DummyEmailSender : IEmailSender
+{
+    public Task SendEmailAsync(string email, string subject, string htmlMessage)
+    {
+        // No email sending required for POS
+        return Task.CompletedTask;
+    }
+}

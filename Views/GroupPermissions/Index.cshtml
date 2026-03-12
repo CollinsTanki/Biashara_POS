@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Biashara_POS.DTOs.GroupPermission.GroupPermissionDto>
+
+@{
+	ViewData["Title"] = "Group Permissions";
+}
+
+<div class="container mt-4">
+
+	<h3>
+		<i class="bi bi-shield-lock"></i>
+		Group Permissions
+	</h3>
+
+	<a asp-action="Create" class="btn btn-primary mb-3">
+		<i class="bi bi-plus-circle"></i> Add Permission
+	</a>
+
+	<table class="table table-bordered table-hover">
+
+		<thead class="table-dark">
+			<tr>
+				<th>Group</th>
+				<th>Function</th>
+				<th><i class="bi bi-eye"></i> View</th>
+				<th><i class="bi bi-plus"></i> Create</th>
+				<th><i class="bi bi-pencil"></i> Edit</th>
+				<th><i class="bi bi-trash"></i> Delete</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+
+		<tbody>
+
+			@foreach (var item in Model)
+			{
+				<tr>
+
+					<td>@item.GroupName</td>
+					<td>@item.FunctionName</td>
+
+					<td>@(item.CanView ? "✔" : "❌")</td>
+					<td>@(item.CanCreate ? "✔" : "❌")</td>
+					<td>@(item.CanEdit ? "✔" : "❌")</td>
+					<td>@(item.CanDelete ? "✔" : "❌")</td>
+
+					<td>
+
+						<a asp-action="Edit" asp-route-id="@item.GroupPermissionId"
+						   class="btn btn-warning btn-sm">
+							<i class="bi bi-pencil-square"></i>
+						</a>
+
+						<a asp-action="Delete" asp-route-id="@item.GroupPermissionId"
+						   class="btn btn-danger btn-sm">
+							<i class="bi bi-trash"></i>
+						</a>
+
+					</td>
+
+				</tr>
+			}
+
+		</tbody>
+	</table>
+</div>

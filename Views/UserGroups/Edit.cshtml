@@ -1,0 +1,51 @@
+﻿@model Biashara_POS.DTOs.UserGroup.UpdateUserGroupDto
+
+@{
+    ViewData["Title"] = "User Groups";
+}
+
+
+<h3>
+    <i class="bi bi-pencil-square text-warning"></i>
+    Edit User Group
+</h3>
+
+<form asp-action="Edit" method="post">
+
+    <input type="hidden" asp-for="UserGroupId"/>
+
+    <div class="mb-3">
+
+        <label class="form-label">
+            <i class="bi bi-diagram-3"></i>
+            Group Name
+        </label>
+
+        <input asp-for="GroupName" class="form-control"/>
+
+        <span asp-validation-for="GroupName" class="text-danger"></span>
+
+    </div>
+
+    <div class="mb-3">
+
+        <label class="form-label">
+            <i class="bi bi-card-text"></i>
+            Description
+        </label>
+
+        <textarea asp-for="Description" class="form-control"></textarea>
+
+    </div>
+
+    <button class="btn btn-primary">
+        <i class="bi bi-check-circle"></i>
+        Update
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i>
+        Back
+    </a>
+
+</form>

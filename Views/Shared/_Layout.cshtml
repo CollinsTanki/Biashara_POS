@@ -1,50 +1,50 @@
 ﻿@{
     var currentYear = DateTime.Now.Year;
 
-
-int lowStockCount = ViewBag.LowStockCount != null ? (int)ViewBag.LowStockCount : 0;
+    int lowStockCount = ViewBag.LowStockCount != null ? (int)ViewBag.LowStockCount : 0;
     int unreadMessages = ViewBag.UnreadMessages != null ? (int)ViewBag.UnreadMessages : 0;
     int unreadNotifications = ViewBag.UnreadNotifications != null ? (int)ViewBag.UnreadNotifications : 0;
 
     var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
 
-    var inventoryControllers = new[]
-    {
-    "StockCategory","StockSubCategory","StockMeasure",
-    "VatSetup","Product","Supplier","Purchase","PurchaseItem"
-};
-
-    var salesControllers = new[]
-    {
-    "Sales","SaleItems"
-};
+    var managementControllers = new[] { "Company", "Branch" };
 
     var userControllers = new[]
     {
-    "Users","UserGroup"
-};
+        "Users","UserGroups","Permission","AccessRights"
+    };
 
+    var inventoryControllers = new[]
+    {
+        "Product","StockCategory","StockSubCategory",
+        "StockMeasure","VatSetup","Supplier",
+        "Purchase","PurchaseItem"
+    };
+
+    var salesControllers = new[]
+    {
+        "Customer","Sales","SaleItems","Quotation","Invoice"
+    };
+
+    var isManagementActive = managementControllers.Contains(currentController);
+    var isUserActive = userControllers.Contains(currentController);
     var isInventoryActive = inventoryControllers.Contains(currentController);
     var isSalesActive = salesControllers.Contains(currentController);
-    var isUserActive = userControllers.Contains(currentController);
-
-
 }
 
 <!DOCTYPE html>
-
 <html lang="en">
+
 <head>
 
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>@ViewData["Title"] - BiasharaPOS</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/products.css" asp-append-version="true" />
 
     @RenderSection("Styles", required: false)
 
@@ -52,37 +52,13 @@ int lowStockCount = ViewBag.LowStockCount != null ? (int)ViewBag.LowStockCount :
 
 <body class="d-flex flex-column min-vh-100">
 
-    <!-- ===================== TOP NAVBAR ===================== -->
-
     <header class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top px-3">
 
-        <div class="container-fluid d-flex justify-content-between align-items-center">
+        <div class="container-fluid d-flex justify-content-between">
 
-            <div class="d-flex align-items-center">
-
-                <a asp-controller="Home" asp-action="Index" class="navbar-brand fw-bold me-4">
-
-                    <i class="bi bi-shop"></i> BiasharaPOS
-
-                </a>
-
-                <ul class="navbar-nav flex-row gap-2">
-
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Home" asp-action="Contact">Contact</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </li>
-
-                </ul>
-
-            </div>
+            <a asp-controller="Home" asp-action="Index" class="navbar-brand fw-bold">
+                <i class="bi bi-shop"></i> BiasharaPOS
+            </a>
 
             <div class="d-flex align-items-center gap-3">
 
@@ -90,27 +66,22 @@ int lowStockCount = ViewBag.LowStockCount != null ? (int)ViewBag.LowStockCount :
 
                 <div class="dropdown">
 
-                    <a class="btn btn-outline-secondary position-relative" href="#" data-bs-toggle="dropdown">
+                    <a class="btn btn-outline-secondary position-relative" data-bs-toggle="dropdown">
 
                         <i class="bi bi-envelope-fill"></i>
 
                         @if (unreadMessages > 0)
                         {
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <span class="position-absolute top-0 start-100 translate-middle badge bg-danger">
                                 @unreadMessages
                             </span>
                         }
 
                     </a>
 
-                    <ul class="dropdown-menu dropdown-menu-end shadow">
-
-                        <li class="dropdown-header fw-bold">Messages</li>
-
-                        <li><hr class="dropdown-divider" /></li>
-
-                        <li class="px-3">You have @unreadMessages unread messages</li>
-
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li class="dropdown-header">Messages</li>
+                        <li class="px-3">Unread: <b>@unreadMessages</b></li>
                     </ul>
 
                 </div>
@@ -119,42 +90,81 @@ int lowStockCount = ViewBag.LowStockCount != null ? (int)ViewBag.LowStockCount :
 
                 <div class="dropdown">
 
-                    <a class="btn btn-outline-secondary position-relative" href="#" data-bs-toggle="dropdown">
+                    <a class="btn btn-outline-secondary position-relative" data-bs-toggle="dropdown">
 
                         <i class="bi bi-bell-fill"></i>
 
                         @if (unreadNotifications > 0)
                         {
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            <span class="position-absolute top-0 start-100 translate-middle badge bg-warning text-dark">
                                 @unreadNotifications
                             </span>
                         }
 
                     </a>
 
-                    <ul class="dropdown-menu dropdown-menu-end shadow">
-
-                        <li class="dropdown-header fw-bold">Notifications</li>
-
-                        <li><hr class="dropdown-divider" /></li>
-
-                        <li class="px-3">You have @unreadNotifications unread notifications</li>
-
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li class="dropdown-header">Notifications</li>
+                        <li class="px-3">Unread: <b>@unreadNotifications</b></li>
                     </ul>
 
                 </div>
 
-                <a asp-controller="Account" asp-action="Login" class="btn btn-outline-primary btn-sm">
+                <!-- User -->
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
 
-                    Login
+                    <div class="dropdown">
 
-                </a>
+                        <button class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> @User.Identity.Name
+                        </button>
 
-                <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-sm">
+                        <ul class="dropdown-menu dropdown-menu-end">
 
-                    Register
+                            <li>
+                                <a class="dropdown-item" asp-controller="Users" asp-action="Profile">
+                                    <i class="bi bi-person"></i> Profile
+                                </a>
+                            </li>
 
-                </a>
+                            <li>
+                                <a class="dropdown-item" asp-controller="Users" asp-action="Settings">
+                                    <i class="bi bi-gear"></i> Settings
+                                </a>
+                            </li>
+
+                            <li><hr /></li>
+
+                            <li>
+
+                                <form asp-area="Identity" asp-page="/Account/Logout" method="post">
+
+                                    <button class="dropdown-item text-danger">
+                                        <i class="bi bi-box-arrow-right"></i> Logout
+                                    </button>
+
+                                </form>
+
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                }
+                else
+                {
+
+                    <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline-primary btn-sm">
+                        Login
+                    </a>
+
+                    <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary btn-sm">
+                        Register
+                    </a>
+
+                }
 
             </div>
 
@@ -162,56 +172,69 @@ int lowStockCount = ViewBag.LowStockCount != null ? (int)ViewBag.LowStockCount :
 
     </header>
 
-    <!-- ===================== MAIN LAYOUT ===================== -->
-
     <div class="d-flex flex-grow-1">
 
-        <!-- ===================== SIDEBAR ===================== -->
+        <!-- SIDEBAR -->
 
-        <aside class="bg-dark text-white p-3 vh-100 flex-shrink-0" style="width:260px;">
+        <aside class="bg-dark text-white p-3 vh-100 flex-shrink-0" style="width:260px">
 
-            <h5 class="fw-bold text-center mb-4">
-
+            <h5 class="text-center mb-4">
                 <i class="bi bi-speedometer2"></i> Admin Panel
-
             </h5>
 
-            <ul class="nav nav-pills flex-column mb-auto">
+            <ul class="nav nav-pills flex-column">
 
-                <!-- DASHBOARD -->
-
-                <li class="nav-item mb-2">
-
-                    <a asp-controller="Home"
-                       asp-action="Index"
+                <li class="nav-item">
+                    <a asp-controller="Home" asp-action="Index"
                        class="nav-link text-white @(currentController=="Home"?"active":"")">
-
                         <i class="bi bi-grid"></i> Dashboard
+                    </a>
+                </li>
+
+                <!-- MANAGEMENT -->
+
+                <li class="mt-3 text-uppercase small text-secondary ps-3">Management</li>
+
+                <li>
+
+                    <a class="nav-link text-white d-flex justify-content-between @(isManagementActive?"active":"")"
+                       data-bs-toggle="collapse" href="#managementMenu">
+
+                        <span><i class="bi bi-building"></i> Management</span>
+                        <i class="bi bi-chevron-down"></i>
 
                     </a>
+
+                    <ul class="collapse list-unstyled ps-3 @(isManagementActive?"show":"")" id="managementMenu">
+
+                        <li>
+                            <a asp-controller="Company" asp-action="Index"
+                               class="nav-link text-white">
+                                <i class="bi bi-building"></i> Companies
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="Branch" asp-action="Index"
+                               class="nav-link text-white">
+                                <i class="bi bi-diagram-3"></i> Branches
+                            </a>
+                        </li>
+
+                    </ul>
 
                 </li>
 
                 <!-- USER MANAGEMENT -->
 
-                <li class="nav-item mt-3 text-uppercase text-secondary small fw-bold ps-3">
+                <li class="mt-3 text-uppercase small text-secondary ps-3">User Management</li>
 
-                    User Management
+                <li>
 
-                </li>
+                    <a class="nav-link text-white d-flex justify-content-between @(isUserActive?"active":"")"
+                       data-bs-toggle="collapse" href="#userMenu">
 
-                <li class="nav-item">
-
-                    <a class="nav-link text-white d-flex justify-content-between align-items-center @(isUserActive?"active":"")"
-                       data-bs-toggle="collapse"
-                       href="#userMenu">
-
-                        <span>
-
-                            <i class="bi bi-people"></i> Users
-
-                        </span>
-
+                        <span><i class="bi bi-people"></i> Users</span>
                         <i class="bi bi-chevron-down"></i>
 
                     </a>
@@ -219,88 +242,53 @@ int lowStockCount = ViewBag.LowStockCount != null ? (int)ViewBag.LowStockCount :
                     <ul class="collapse list-unstyled ps-3 @(isUserActive?"show":"")" id="userMenu">
 
                         <li>
-
-                            <a asp-controller="Users"
-                               asp-action="Index"
-                               class="nav-link text-white @(currentController=="Users"?"active":"")">
-
+                            <a asp-controller="Users" asp-action="Index" class="nav-link text-white">
                                 <i class="bi bi-person"></i> System Users
-
                             </a>
-
                         </li>
 
                         <li>
-
-                            <a asp-controller="UserGroup"
-                               asp-action="Index"
-                               class="nav-link text-white @(currentController=="UserGroup"?"active":"")">
-
+                            <a asp-controller="UserGroups" asp-action="Index" class="nav-link text-white">
                                 <i class="bi bi-person-badge"></i> User Groups
-
                             </a>
+                        </li>
+                        <li>
+                            <a asp-controller="AppFunctions" asp-action="Index" class="nav-link text-white">
+                                <i class="bi bi-wrench"></i> App Functions
+                            </a>
+                        </li>
 
+                        <li>
+                            <a asp-controller="GroupPermissions" asp-action="Index" class="nav-link text-white">
+                                <i class="bi bi-key"></i> Permissions
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="AccessRights" asp-action="Index" class="nav-link text-white">
+                                <i class="bi bi-shield-lock"></i> Access Rights
+                            </a>
                         </li>
 
                     </ul>
 
                 </li>
 
-                <!-- MANAGEMENT -->
-
-                <li class="nav-item mt-3 text-uppercase text-secondary small fw-bold ps-3">
-
-                    Management
-
-                </li>
-
-                <li class="nav-item">
-
-                    <a asp-controller="Company"
-                       asp-action="Index"
-                       class="nav-link text-white @(currentController=="Company"?"active":"")">
-
-                        <i class="bi bi-building"></i> Companies
-
-                    </a>
-
-                </li>
-
-                <li class="nav-item">
-
-                    <a asp-controller="Branch"
-                       asp-action="Index"
-                       class="nav-link text-white @(currentController=="Branch"?"active":"")">
-
-                        <i class="bi bi-diagram-3"></i> Branches
-
-                    </a>
-
-                </li>
-
                 <!-- INVENTORY -->
 
-                <li class="nav-item mt-3 text-uppercase text-secondary small fw-bold ps-3">
+                <li class="mt-3 text-uppercase small text-secondary ps-3">Inventory</li>
 
-                    Inventory
+                <li>
 
-                </li>
-
-                <li class="nav-item">
-
-                    <a class="nav-link text-white d-flex justify-content-between align-items-center @(isInventoryActive?"active":"")"
-                       data-bs-toggle="collapse"
-                       href="#inventoryMenu">
+                    <a class="nav-link text-white d-flex justify-content-between @(isInventoryActive?"active":"")"
+                       data-bs-toggle="collapse" href="#inventoryMenu">
 
                         <span>
-
                             <i class="bi bi-box-seam"></i> Inventory
-
                             @if (lowStockCount > 0)
                             {
                                 <span class="badge bg-danger ms-2">@lowStockCount</span>
                             }
-
                         </span>
 
                         <i class="bi bi-chevron-down"></i>
@@ -310,58 +298,44 @@ int lowStockCount = ViewBag.LowStockCount != null ? (int)ViewBag.LowStockCount :
                     <ul class="collapse list-unstyled ps-3 @(isInventoryActive?"show":"")" id="inventoryMenu">
 
                         <li>
-                            <a asp-controller="StockCategory" asp-action="Index"
-                               class="nav-link text-white @(currentController=="StockCategory"?"active":"")">
-                                <i class="bi bi-list-ul"></i> Stock Categories
+                            <a asp-controller="Product" asp-action="Index" class="nav-link text-white">
+                                <i class="bi bi-box"></i> Stock (All)
                             </a>
                         </li>
 
                         <li>
-                            <a asp-controller="StockSubCategory" asp-action="Index"
-                               class="nav-link text-white @(currentController=="StockSubCategory"?"active":"")">
-                                <i class="bi bi-list"></i> Stock Sub Categories
+                            <a asp-controller="StockCategory" asp-action="Index" class="nav-link text-white">
+                                <i class="bi bi-tags"></i> Stock Categories
                             </a>
                         </li>
 
                         <li>
-                            <a asp-controller="StockMeasure" asp-action="Index"
-                               class="nav-link text-white @(currentController=="StockMeasure"?"active":"")">
-                                <i class="bi bi-rulers"></i> Stock Measures
+                            <a asp-controller="StockSubCategory" asp-action="Index" class="nav-link text-white">
+                                <i class="bi bi-tag"></i> Stock Sub Categories
                             </a>
                         </li>
 
                         <li>
-                            <a asp-controller="VatSetup" asp-action="Index"
-                               class="nav-link text-white @(currentController=="VatSetup"?"active":"")">
+                            <a asp-controller="StockMeasure" asp-action="Index" class="nav-link text-white">
+                                <i class="bi bi-rulers"></i> Stock Measure
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="VatSetup" asp-action="Index" class="nav-link text-white">
                                 <i class="bi bi-percent"></i> VAT Setup
                             </a>
                         </li>
 
                         <li>
-                            <a asp-controller="Product" asp-action="Index"
-                               class="nav-link text-white @(currentController=="Product"?"active":"")">
-                                <i class="bi bi-box"></i> Products
-                            </a>
-                        </li>
-
-                        <li>
-                            <a asp-controller="Supplier" asp-action="Index"
-                               class="nav-link text-white @(currentController=="Supplier"?"active":"")">
+                            <a asp-controller="Supplier" asp-action="Index" class="nav-link text-white">
                                 <i class="bi bi-truck"></i> Suppliers
                             </a>
                         </li>
 
                         <li>
-                            <a asp-controller="Purchase" asp-action="Index"
-                               class="nav-link text-white @(currentController=="Purchase"?"active":"")">
+                            <a asp-controller="Purchase" asp-action="Index" class="nav-link text-white">
                                 <i class="bi bi-bag-check"></i> Purchases
-                            </a>
-                        </li>
-
-                        <li>
-                            <a asp-controller="PurchaseItem" asp-action="Index"
-                               class="nav-link text-white @(currentController=="PurchaseItem"?"active":"")">
-                                <i class="bi bi-bag-plus"></i> Purchase Items
                             </a>
                         </li>
 
@@ -371,24 +345,14 @@ int lowStockCount = ViewBag.LowStockCount != null ? (int)ViewBag.LowStockCount :
 
                 <!-- SALES -->
 
-                <li class="nav-item mt-3 text-uppercase text-secondary small fw-bold ps-3">
+                <li class="mt-3 text-uppercase small text-secondary ps-3">Sales</li>
 
-                    Sales
+                <li>
 
-                </li>
+                    <a class="nav-link text-white d-flex justify-content-between @(isSalesActive?"active":"")"
+                       data-bs-toggle="collapse" href="#salesMenu">
 
-                <li class="nav-item">
-
-                    <a class="nav-link text-white d-flex justify-content-between align-items-center @(isSalesActive?"active":"")"
-                       data-bs-toggle="collapse"
-                       href="#salesMenu">
-
-                        <span>
-
-                            <i class="bi bi-cart"></i> Sales
-
-                        </span>
-
+                        <span><i class="bi bi-cart"></i> Sales</span>
                         <i class="bi bi-chevron-down"></i>
 
                     </a>
@@ -396,27 +360,33 @@ int lowStockCount = ViewBag.LowStockCount != null ? (int)ViewBag.LowStockCount :
                     <ul class="collapse list-unstyled ps-3 @(isSalesActive?"show":"")" id="salesMenu">
 
                         <li>
-
-                            <a asp-controller="Sales"
-                               asp-action="Index"
-                               class="nav-link text-white @(currentController=="Sales"?"active":"")">
-
-                                <i class="bi bi-receipt"></i> Sales List
-
+                            <a asp-controller="Customer" asp-action="Index" class="nav-link text-white">
+                                <i class="bi bi-person-lines-fill"></i> Customers
                             </a>
-
                         </li>
 
                         <li>
-
-                            <a asp-controller="SaleItems"
-                               asp-action="Index"
-                               class="nav-link text-white @(currentController=="SaleItems"?"active":"")">
-
-                                <i class="bi bi-cart-plus"></i> Sale Items
-
+                            <a asp-controller="Quotation" asp-action="Index" class="nav-link text-white">
+                                <i class="bi bi-file-earmark-text"></i> Quotations
                             </a>
+                        </li>
 
+                        <li>
+                            <a asp-controller="Sales" asp-action="Index" class="nav-link text-white">
+                                <i class="bi bi-receipt"></i> Sales
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="SaleItems" asp-action="Index" class="nav-link text-white">
+                                <i class="bi bi-cart-plus"></i> Sale Items
+                            </a>
+                        </li>
+
+                        <li>
+                            <a asp-controller="Invoice" asp-action="Index" class="nav-link text-white">
+                                <i class="bi bi-file-text"></i> Invoices
+                            </a>
                         </li>
 
                     </ul>
@@ -425,27 +395,13 @@ int lowStockCount = ViewBag.LowStockCount != null ? (int)ViewBag.LowStockCount :
 
             </ul>
 
-            <div class="mt-auto">
-
-                <hr class="text-secondary" />
-
-                <a href="#" class="nav-link text-danger">
-
-                    <i class="bi bi-box-arrow-right"></i> Logout
-
-                </a>
-
-            </div>
-
         </aside>
 
-        <!-- ===================== MAIN CONTENT ===================== -->
+        <!-- MAIN CONTENT -->
 
         <main class="flex-grow-1 p-4">
 
-            <h2 class="fw-bold mb-4">
-                @ViewData["Title"]
-            </h2>
+            <h2 class="fw-bold mb-4">@ViewData["Title"]</h2>
 
             @RenderBody()
 
@@ -453,24 +409,14 @@ int lowStockCount = ViewBag.LowStockCount != null ? (int)ViewBag.LowStockCount :
 
     </div>
 
-    <!-- ===================== FOOTER ===================== -->
-
     <footer class="text-center py-3 text-muted small mt-auto">
-
         © @currentYear - BiasharaPOS
-
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 
 </body>
-
 </html>
