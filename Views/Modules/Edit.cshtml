@@ -1,0 +1,33 @@
+﻿@model Biashara_POS.DTOs.ModuleDTOs.UpdateModuleDto
+
+@{
+	ViewData["Title"] = "Edit a Module";
+}
+<h3>
+	<i class="bi bi-pencil-square text-warning"></i>
+	Edit Module
+</h3>
+
+<form asp-action="Edit">
+
+	<input type="hidden" asp-for="ModuleId" />
+
+	<div class="mb-3">
+
+		<label>
+			<i class="bi bi-box"></i>
+			Module Name
+		</label>
+
+		<input asp-for="ModuleName" class="form-control" />
+
+	</div>
+
+	<button class="btn btn-primary">
+
+		<i class="bi bi-check-circle"></i>
+		Update
+
+	</button>
+
+</form>

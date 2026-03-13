@@ -1,0 +1,34 @@
+﻿@model Biashara_POS.DTOs.ModuleDTOs.CreateModuleDto
+
+@{
+	ViewData["Title"] = "Create a Module";
+}
+
+<h3>
+	<i class="bi bi-plus-circle text-success"></i>
+	Create Module
+</h3>
+
+<form asp-action="Create">
+
+	<div class="mb-3">
+
+		<label>
+			<i class="bi bi-box"></i>
+			Module Name
+		</label>
+
+		<input asp-for="ModuleName" class="form-control" />
+
+		<span asp-validation-for="ModuleName" class="text-danger"></span>
+
+	</div>
+
+	<button class="btn btn-success">
+
+		<i class="bi bi-save"></i>
+		Save
+
+	</button>
+
+</form>

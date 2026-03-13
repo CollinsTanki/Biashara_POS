@@ -1,29 +1,50 @@
-﻿using Biashara_POS.DTOs.Users;
+﻿using Biashara_POS.Data;
+using Biashara_POS.DTOs.Users;
 using Biashara_POS.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Biashara_POS.Controllers
 {
-   // [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ApplicationDbContext _context;
 
         public UsersController(
             UserManager<AppUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _context = context;
         }
 
-        // ===============================
+        // ====================================
+        // LOAD DROPDOWNS (Branches + UserGroups)
+        // ====================================
+        private async Task LoadDropdowns()
+        {
+            ViewBag.Branches = new SelectList(
+                await _context.Branches.ToListAsync(),
+                "BranchId",
+                "BranchName"
+            );
+
+            ViewBag.UserGroups = new SelectList(
+                await _context.UserGroups.ToListAsync(),
+                "UserGroupId",
+                "GroupName"
+            );
+        }
+
+        // ====================================
         // USERS LIST
-        // ===============================
+        // ====================================
         public async Task<IActionResult> Index()
         {
             var users = await _userManager.Users
@@ -35,27 +56,34 @@ namespace Biashara_POS.Controllers
                     Email = u.Email!,
                     Position = u.Position,
                     IsActive = u.IsActive,
-                    Branch = u.Branch != null ? u.Branch.BranchName : string.Empty
+                    Branch = u.Branch != null ? u.Branch.BranchName : ""
                 })
                 .ToListAsync();
 
             return View(users);
         }
 
-        // ===============================
-        // CREATE USER
-        // ===============================
-        public IActionResult Create()
+        // ====================================
+        // CREATE USER (GET)
+        // ====================================
+        public async Task<IActionResult> Create()
         {
+            await LoadDropdowns();
             return View();
         }
 
+        // ====================================
+        // CREATE USER (POST)
+        // ====================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UserCreateDto dto)
         {
             if (!ModelState.IsValid)
+            {
+                await LoadDropdowns();
                 return View(dto);
+            }
 
             var user = new AppUser
             {
@@ -64,8 +92,8 @@ namespace Biashara_POS.Controllers
                 UserName = dto.Email,
                 Position = dto.Position,
                 Address = dto.Address,
-                BranchId = dto.BranchId,       // nullable now
-                UserGroupId = dto.UserGroupId, // nullable
+                BranchId = dto.BranchId,
+                UserGroupId = dto.UserGroupId,
                 IsActive = dto.IsActive,
                 CreatedAt = DateTime.Now
             };
@@ -76,14 +104,15 @@ namespace Biashara_POS.Controllers
                 return RedirectToAction(nameof(Index));
 
             foreach (var error in result.Errors)
-                ModelState.AddModelError(string.Empty, error.Description);
+                ModelState.AddModelError("", error.Description);
 
+            await LoadDropdowns();
             return View(dto);
         }
 
-        // ===============================
-        // EDIT USER
-        // ===============================
+        // ====================================
+        // EDIT USER (GET)
+        // ====================================
         public async Task<IActionResult> Edit(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -98,20 +127,28 @@ namespace Biashara_POS.Controllers
                 Email = user.Email!,
                 Position = user.Position,
                 Address = user.Address,
-                BranchId = user.BranchId,       // nullable
-                UserGroupId = user.UserGroupId, // nullable
+                BranchId = user.BranchId,
+                UserGroupId = user.UserGroupId,
                 IsActive = user.IsActive
             };
+
+            await LoadDropdowns();
 
             return View(dto);
         }
 
+        // ====================================
+        // EDIT USER (POST)
+        // ====================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UserEditDto dto)
         {
             if (!ModelState.IsValid)
+            {
+                await LoadDropdowns();
                 return View(dto);
+            }
 
             var user = await _userManager.FindByIdAsync(dto.Id);
 
@@ -123,8 +160,8 @@ namespace Biashara_POS.Controllers
             user.UserName = dto.Email;
             user.Position = dto.Position;
             user.Address = dto.Address;
-            user.BranchId = dto.BranchId;        // nullable
-            user.UserGroupId = dto.UserGroupId;  // nullable
+            user.BranchId = dto.BranchId;
+            user.UserGroupId = dto.UserGroupId;
             user.IsActive = dto.IsActive;
 
             await _userManager.UpdateAsync(user);
@@ -132,9 +169,9 @@ namespace Biashara_POS.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // ===============================
+        // ====================================
         // DELETE USER
-        // ===============================
+        // ====================================
         public async Task<IActionResult> Delete(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
