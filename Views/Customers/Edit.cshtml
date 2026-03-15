@@ -1,0 +1,41 @@
+﻿@model Biashara_POS.DTOs.UpdateCustomerDto
+
+@{
+	ViewData["Title"] = "Edit a Customer";
+}
+<h3><i class="bi bi-pencil-square"></i> Edit Customer</h3>
+
+<form asp-action="Edit">
+
+	<input type="hidden" asp-for="CustomerId" />
+
+	<div class="mb-3">
+		<label>Full Name</label>
+		<input asp-for="FullName" class="form-control" />
+	</div>
+
+	<div class="mb-3">
+		<label>Phone</label>
+		<input asp-for="PhoneNumber" class="form-control" />
+	</div>
+
+	<div class="mb-3">
+		<label>Location</label>
+		<input asp-for="Location" class="form-control" />
+	</div>
+
+	<div class="mb-3">
+		<label>Credit Limit</label>
+		<input asp-for="CreditLimit" class="form-control" />
+	</div>
+
+	<div class="form-check mb-3">
+		<input asp-for="IsActive" class="form-check-input" />
+		<label class="form-check-label">Active</label>
+	</div>
+
+	<button class="btn btn-success">
+		<i class="bi bi-save"></i> Update
+	</button>
+
+</form>

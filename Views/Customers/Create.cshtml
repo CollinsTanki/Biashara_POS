@@ -1,0 +1,44 @@
+﻿@model Biashara_POS.DTOs.CreateCustomerDto
+
+@{
+	ViewData["Title"] = "Create a Customer";
+}
+<h3><i class="bi bi-person-plus"></i> Add Customer</h3>
+
+<form asp-action="Create">
+
+	<div class="mb-3">
+		<label class="form-label">Full Name</label>
+		<input asp-for="FullName" class="form-control" />
+		<span asp-validation-for="FullName" class="text-danger"></span>
+	</div>
+
+	<div class="mb-3">
+		<label>Phone</label>
+		<input asp-for="PhoneNumber" class="form-control" />
+	</div>
+
+	<div class="mb-3">
+		<label>Location</label>
+		<input asp-for="Location" class="form-control" />
+	</div>
+
+	<div class="mb-3">
+		<label>Credit Limit</label>
+		<input asp-for="CreditLimit" class="form-control" />
+	</div>
+
+	<div class="form-check mb-3">
+		<input asp-for="IsWalkIn" class="form-check-input" />
+		<label class="form-check-label">Walk In Customer</label>
+	</div>
+
+	<button class="btn btn-success">
+		<i class="bi bi-check-circle"></i> Save
+	</button>
+
+	<a asp-action="Index" class="btn btn-secondary">
+		<i class="bi bi-arrow-left"></i> Back
+	</a>
+
+</form>

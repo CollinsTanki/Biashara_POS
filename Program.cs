@@ -18,9 +18,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 
-// ===============================
 // IDENTITY CONFIGURATION
-// ===============================
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 {
     // Password Settings
@@ -40,15 +38,12 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
 .AddDefaultTokenProviders();
 
 
-// ===============================
 // FIX REGISTER CRASH (EMAIL SENDER)
-// ===============================
+
 builder.Services.AddSingleton<IEmailSender, DummyEmailSender>();
 
 
-// ===============================
 // COOKIE CONFIGURATION
-// ===============================
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Identity/Account/Login";

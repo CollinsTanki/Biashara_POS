@@ -1,0 +1,36 @@
+﻿@model Biashara_POS.DTOs.CreateQuotationDto
+
+@{
+	ViewData["Title"] = "Create a Quotation";
+}
+<h3>
+	<i class="bi bi-file-plus"></i> Create Quotation
+</h3>
+
+<form asp-action="Create">
+
+	<div class="mb-3">
+		<label>Reference Number</label>
+		<input asp-for="RefNumber" class="form-control" />
+	</div>
+
+	<div class="mb-3">
+		<label>Valid Until</label>
+		<input asp-for="ValidUntil" type="date" class="form-control" />
+	</div>
+
+	<div class="mb-3">
+		<label>Customer</label>
+
+		<select asp-for="CustomerId"
+				asp-items="@(new SelectList(ViewBag.Customers,"CustomerId","FullName"))"
+				class="form-control">
+		</select>
+
+	</div>
+
+	<button class="btn btn-success">
+		<i class="bi bi-check-circle"></i> Save
+	</button>
+
+</form>

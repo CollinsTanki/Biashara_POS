@@ -1,0 +1,63 @@
+﻿@model IEnumerable<Biashara_POS.DTOs.QuotationItemDto>
+
+@{
+	ViewData["Title"] = "Quotation Items";
+}
+<h3>
+	<i class="bi bi-list-ul"></i> Quotation Items
+</h3>
+
+<a asp-action="Create"
+   asp-route-quotationId="@ViewBag.QuotationId"
+   class="btn btn-primary mb-3">
+	<i class="bi bi-plus-circle"></i> Add Item
+</a>
+
+<table class="table table-bordered table-striped">
+
+	<thead class="table-dark">
+		<tr>
+			<th>Product</th>
+			<th>Qty</th>
+			<th>Unit Price</th>
+			<th>Discount</th>
+			<th>VAT</th>
+			<th>SubTotal</th>
+			<th></th>
+		</tr>
+	</thead>
+
+	<tbody>
+
+		@foreach (var item in Model)
+		{
+			<tr>
+
+				<td>@item.ProductName</td>
+				<td>@item.Quantity</td>
+				<td>@item.UnitPrice</td>
+				<td>@item.Discount</td>
+				<td>@item.VatAmount</td>
+				<td>@item.SubTotal</td>
+
+				<td>
+
+					<a asp-action="Edit"
+					   asp-route-id="@item.QuotationItemId"
+					   class="btn btn-warning btn-sm">
+						<i class="bi bi-pencil"></i>
+					</a>
+
+					<a asp-action="Delete"
+					   asp-route-id="@item.QuotationItemId"
+					   class="btn btn-danger btn-sm">
+						<i class="bi bi-trash"></i>
+					</a>
+
+				</td>
+
+			</tr>
+		}
+
+	</tbody>
+</table>

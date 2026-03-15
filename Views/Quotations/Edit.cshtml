@@ -1,0 +1,28 @@
+﻿@model Biashara_POS.DTOs.UpdateQuotationDto
+
+@{
+	ViewData["Title"] = "Edit a Quotation";
+}
+<h3>
+	<i class="bi bi-pencil-square"></i> Edit Quotation
+</h3>
+
+<form asp-action="Edit">
+
+	<input type="hidden" asp-for="QuotationId" />
+
+	<div class="mb-3">
+		<label>Valid Until</label>
+		<input asp-for="ValidUntil" type="date" class="form-control" />
+	</div>
+
+	<div class="form-check mb-3">
+		<input asp-for="IsConfirmed" class="form-check-input" />
+		<label class="form-check-label">Confirmed</label>
+	</div>
+
+	<button class="btn btn-primary">
+		<i class="bi bi-save"></i> Update
+	</button>
+
+</form>

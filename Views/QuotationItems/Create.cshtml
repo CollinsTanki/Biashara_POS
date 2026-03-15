@@ -1,0 +1,49 @@
+﻿@model Biashara_POS.DTOs.CreateQuotationItemDto
+
+@{
+	ViewData["Title"] = "Create a Quotation Item";
+}
+<h3>
+	<i class="bi bi-cart-plus"></i> Add Product to Quotation
+</h3>
+
+<form asp-action="Create">
+
+	<input type="hidden" asp-for="QuotationId" value="@ViewBag.QuotationId" />
+
+	<div class="mb-3">
+
+		<label>Product</label>
+
+		<select asp-for="ProductId"
+				asp-items="@(new SelectList(ViewBag.Products,"ProductId","ProductName"))"
+				class="form-control">
+		</select>
+
+	</div>
+
+	<div class="mb-3">
+		<label>Quantity</label>
+		<input asp-for="Quantity" class="form-control" />
+	</div>
+
+	<div class="mb-3">
+		<label>Unit Price</label>
+		<input asp-for="UnitPrice" class="form-control" />
+	</div>
+
+	<div class="mb-3">
+		<label>Discount</label>
+		<input asp-for="Discount" class="form-control" />
+	</div>
+
+	<div class="mb-3">
+		<label>VAT</label>
+		<input asp-for="VatAmount" class="form-control" />
+	</div>
+
+	<button class="btn btn-success">
+		<i class="bi bi-check-circle"></i> Save
+	</button>
+
+</form>
