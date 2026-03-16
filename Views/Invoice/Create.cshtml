@@ -1,0 +1,55 @@
+﻿@model Biashara_POS.DTOs.InvoiceDto
+
+@{
+    ViewData["Title"] = "Create Invoice";
+}
+
+<h2>Create Invoice</h2>
+
+<form asp-action="Create">
+
+    <div class="form-group">
+        <label asp-for="InvoiceNumber"></label>
+        <input asp-for="InvoiceNumber" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="InvoiceDate"></label>
+        <input asp-for="InvoiceDate" type="date" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CustomerId"></label>
+        <input asp-for="CustomerId" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="SubTotal"></label>
+        <input asp-for="SubTotal" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="VatTotal"></label>
+        <input asp-for="VatTotal" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DiscountTotal"></label>
+        <input asp-for="DiscountTotal" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="GrandTotal"></label>
+        <input asp-for="GrandTotal" class="form-control" />
+    </div>
+
+    <div class="form-check">
+        <input asp-for="IsPaid" class="form-check-input" />
+        <label asp-for="IsPaid" class="form-check-label">Paid</label>
+    </div>
+
+    <br />
+
+    <button type="submit" class="btn btn-success">Save</button>
+
+</form>

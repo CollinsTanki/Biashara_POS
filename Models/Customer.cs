@@ -29,6 +29,9 @@ namespace Biashara_POS.Models
 
         // Navigation
         public ICollection<Sale> Sales { get; set; } = new List<Sale>();
-
+        // ADD THIS (Fix)
+        public ICollection<Invoice>? Invoices { get; set; }
     }
+
 }
+

@@ -11,36 +11,69 @@ namespace Biashara_POS.Data
         {
         }
 
+        
+        // SYSTEM SECURITY
+        
         public DbSet<UserGroup> UserGroups { get; set; }
         public DbSet<Module> Modules { get; set; }
         public DbSet<AppFunction> AppFunctions { get; set; }
         public DbSet<GroupPermission> GroupPermissions { get; set; }
 
+       
+        // COMPANY
+      
         public DbSet<Company> Companies { get; set; }
         public DbSet<Branch> Branches { get; set; }
 
+       
+        // STOCK
+      
         public DbSet<StockCategory> StockCategories { get; set; }
         public DbSet<StockSubCategory> StockSubCategories { get; set; }
         public DbSet<StockMeasure> StockMeasures { get; set; }
         public DbSet<VatSetup> VatSetups { get; set; }
 
-        public DbSet<PaymentMode> PaymentModes { get; set; }
         public DbSet<Product> Products { get; set; }
 
-        public DbSet<Purchase> Purchases { get; set; }
-        public DbSet<PurchaseItem> PurchaseItems { get; set; }
-
-        public DbSet<Sale> Sales { get; set; }
-        public DbSet<SaleItem> SaleItems { get; set; }
-
+        
+        // PAYMENT
+      
+        public DbSet<PaymentMode> PaymentModes { get; set; }
         public DbSet<Payment> Payments { get; set; }
 
+       
+        // CUSTOMERS / SUPPLIERS
+       
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
 
+      
+        // PURCHASES
+       
+        public DbSet<Purchase> Purchases { get; set; }
+        public DbSet<PurchaseItem> PurchaseItems { get; set; }
+
+        
+        // SALES
+       
+        public DbSet<Sale> Sales { get; set; }
+        public DbSet<SaleItem> SaleItems { get; set; }
+
+     
+        // QUOTATIONS
+       
         public DbSet<Quotation> Quotations { get; set; }
         public DbSet<QuotationItem> QuotationItems { get; set; }
 
+       
+        // INVOICES
+     
+        public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<InvoiceItem> InvoiceItems { get; set; }
+
+        
+        // OTHER
+       
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<ImportLog> ImportLogs { get; set; }
 
@@ -48,49 +81,64 @@ namespace Biashara_POS.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // ==============================
-            // DECIMAL PRECISION FIX
-            // ==============================
+            
 
-            // Product
+            // DECIMAL PRECISION
+           
+
             modelBuilder.Entity<Product>()
                 .Property(p => p.BuyingPrice).HasPrecision(18, 2);
+
             modelBuilder.Entity<Product>()
                 .Property(p => p.SellingPrice).HasPrecision(18, 2);
 
-            // Customer
             modelBuilder.Entity<Customer>()
                 .Property(c => c.CreditLimit).HasPrecision(18, 2);
+
             modelBuilder.Entity<Customer>()
                 .Property(c => c.LoyaltyPoints).HasPrecision(18, 2);
+
             modelBuilder.Entity<Customer>()
                 .Property(c => c.BalanceBroughtForward).HasPrecision(18, 2);
 
-            // Expense
             modelBuilder.Entity<Expense>()
                 .Property(e => e.Amount).HasPrecision(18, 2);
 
-            // Sale
             modelBuilder.Entity<Sale>()
                 .Property(s => s.TotalAmount).HasPrecision(18, 2);
+
             modelBuilder.Entity<Sale>()
                 .Property(s => s.Balance).HasPrecision(18, 2);
 
-            // Purchase
             modelBuilder.Entity<Purchase>()
                 .Property(p => p.TotalAmount).HasPrecision(18, 2);
 
-            // Quotation
             modelBuilder.Entity<Quotation>()
                 .Property(q => q.TotalAmount).HasPrecision(18, 2);
 
-            // VAT
+            modelBuilder.Entity<Invoice>()
+                .Property(i => i.SubTotal).HasPrecision(18, 2);
+
+            modelBuilder.Entity<Invoice>()
+                .Property(i => i.VatTotal).HasPrecision(18, 2);
+
+            modelBuilder.Entity<Invoice>()
+                .Property(i => i.DiscountTotal).HasPrecision(18, 2);
+
+            modelBuilder.Entity<Invoice>()
+                .Property(i => i.GrandTotal).HasPrecision(18, 2);
+
+            modelBuilder.Entity<InvoiceItem>()
+                .Property(ii => ii.UnitPrice).HasPrecision(18, 2);
+
+            modelBuilder.Entity<InvoiceItem>()
+                .Property(ii => ii.Total).HasPrecision(18, 2);
+
             modelBuilder.Entity<VatSetup>()
                 .Property(v => v.TaxRate).HasPrecision(18, 4);
 
-            // ==============================
             // UNIQUE CONSTRAINTS
-            // ==============================
+           
 
             modelBuilder.Entity<PaymentMode>()
                 .HasIndex(p => p.ModeName).IsUnique();
@@ -100,6 +148,7 @@ namespace Biashara_POS.Data
 
             modelBuilder.Entity<StockMeasure>()
                 .HasIndex(m => m.MeasureName).IsUnique();
+
             modelBuilder.Entity<StockMeasure>()
                 .HasIndex(m => m.Initials).IsUnique();
 
@@ -123,15 +172,22 @@ namespace Biashara_POS.Data
 
             modelBuilder.Entity<Company>()
                 .HasIndex(c => c.CompanyName).IsUnique();
+
             modelBuilder.Entity<Company>()
                 .HasIndex(c => c.Email).IsUnique();
+
             modelBuilder.Entity<Company>()
-                .HasIndex(c => c.KRAPin).IsUnique().HasFilter("[KRAPin] <> ''");
+                .HasIndex(c => c.KRAPin)
+                .IsUnique()
+                .HasFilter("[KRAPin] <> ''");
 
             modelBuilder.Entity<Product>()
                 .HasIndex(p => new { p.StockCategoryId, p.ProductName }).IsUnique();
+
             modelBuilder.Entity<Product>()
-                .HasIndex(p => p.Barcode).IsUnique().HasFilter("[Barcode] IS NOT NULL");
+                .HasIndex(p => p.Barcode)
+                .IsUnique()
+                .HasFilter("[Barcode] IS NOT NULL");
 
             modelBuilder.Entity<Sale>()
                 .HasIndex(s => s.ReceiptNumber).IsUnique();
@@ -139,70 +195,79 @@ namespace Biashara_POS.Data
             modelBuilder.Entity<Quotation>()
                 .HasIndex(q => q.RefNumber).IsUnique();
 
-            // ==============================
-            // CHECK CONSTRAINTS
-            // ==============================
+            modelBuilder.Entity<Invoice>()
+                .HasIndex(i => i.InvoiceNumber).IsUnique();
+
+           
+            // CHECK CONSTRAINTS (EF CORE 8 FIX)
+            
+
             modelBuilder.Entity<Product>()
-                .HasCheckConstraint("CK_Product_SellingPrice", "[SellingPrice] >= [BuyingPrice]");
+                .ToTable(t => t.HasCheckConstraint(
+                    "CK_Product_SellingPrice",
+                    "[SellingPrice] >= [BuyingPrice]"));
 
             modelBuilder.Entity<Company>()
-                .HasCheckConstraint("CK_Company_RegistrationType", "[RegistrationType] IN ('Individual', 'Business')");
+                .ToTable(t => t.HasCheckConstraint(
+                    "CK_Company_RegistrationType",
+                    "[RegistrationType] IN ('Individual', 'Business')"));
 
             modelBuilder.Entity<Company>()
-                .HasCheckConstraint(
+                .ToTable(t => t.HasCheckConstraint(
                     "CK_Company_KRAPin_Business",
-                    "([RegistrationType] = 'Individual') OR ([KRAPin] <> '')");
+                    "([RegistrationType] = 'Individual') OR ([KRAPin] <> '')"));
 
-            // ==============================
             // RELATIONSHIPS
-            // ==============================
+          
 
-            // Product Relationships
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.StockCategory)
-                .WithMany().HasForeignKey(p => p.StockCategoryId).OnDelete(DeleteBehavior.Restrict);
+                .WithMany()
+                .HasForeignKey(p => p.StockCategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.StockSubCategory)
-                .WithMany().HasForeignKey(p => p.StockSubCategoryId).OnDelete(DeleteBehavior.Restrict);
+                .WithMany()
+                .HasForeignKey(p => p.StockSubCategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.StockMeasure)
-                .WithMany().HasForeignKey(p => p.StockMeasureId).OnDelete(DeleteBehavior.Restrict);
+                .WithMany()
+                .HasForeignKey(p => p.StockMeasureId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.VatSetup)
-                .WithMany().HasForeignKey(p => p.VatSetupId).OnDelete(DeleteBehavior.Restrict);
+                .WithMany()
+                .HasForeignKey(p => p.VatSetupId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // Customer - Sale
             modelBuilder.Entity<Customer>()
                 .HasMany(c => c.Sales)
                 .WithOne(s => s.Customer)
                 .HasForeignKey(s => s.CustomerId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            // Sale - User
             modelBuilder.Entity<Sale>()
                 .HasOne(s => s.User)
                 .WithMany()
                 .HasForeignKey(s => s.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // SaleItem
             modelBuilder.Entity<SaleItem>()
                 .HasOne(si => si.Sale)
                 .WithMany(s => s.SaleItems)
                 .HasForeignKey(si => si.SaleId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Payment
             modelBuilder.Entity<Payment>()
                 .HasOne(p => p.Sale)
                 .WithMany(s => s.Payments)
                 .HasForeignKey(p => p.SaleId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // QuotationItem
             modelBuilder.Entity<QuotationItem>()
                 .HasOne(qi => qi.Quotation)
                 .WithMany(q => q.QuotationItems)
@@ -215,7 +280,6 @@ namespace Biashara_POS.Data
                 .HasForeignKey(qi => qi.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // PurchaseItem
             modelBuilder.Entity<PurchaseItem>()
                 .HasOne(pi => pi.Purchase)
                 .WithMany(p => p.PurchaseItems)
@@ -226,6 +290,24 @@ namespace Biashara_POS.Data
                 .HasOne(pi => pi.Product)
                 .WithMany()
                 .HasForeignKey(pi => pi.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Invoice>()
+                .HasOne(i => i.Customer)
+                .WithMany(c => c.Invoices)
+                .HasForeignKey(i => i.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<InvoiceItem>()
+                .HasOne(ii => ii.Invoice)
+                .WithMany(i => i.InvoiceItems)
+                .HasForeignKey(ii => ii.InvoiceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<InvoiceItem>()
+                .HasOne(ii => ii.Product)
+                .WithMany()
+                .HasForeignKey(ii => ii.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
