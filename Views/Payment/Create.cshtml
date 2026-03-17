@@ -1,0 +1,37 @@
+﻿@model Biashara_POS.DTOs.CreatePaymentDto
+
+@{
+    ViewData["Title"] = "Add Payment";
+}
+
+<h2><i class="bi bi-plus-circle"></i> Add Payment</h2>
+
+<form asp-action="Create">
+    
+    <div class="form-group">
+        <label>Sale ID</label>
+        <input asp-for="SaleId" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Payment Mode</label>
+        <select asp-for="PaymentModeId" class="form-control" asp-items="ViewBag.PaymentModes"></select>
+    </div>
+
+    <div class="form-group">
+        <label>Amount</label>
+        <input asp-for="Amount" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label>Reference</label>
+        <input asp-for="ReferenceNumber" class="form-control" />
+    </div>
+
+    <br />
+
+    <button class="btn btn-success">
+        <i class="bi bi-save"></i> Save
+    </button>
+
+</form>

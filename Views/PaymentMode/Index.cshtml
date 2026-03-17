@@ -1,0 +1,53 @@
+﻿@model IEnumerable<Biashara_POS.DTOs.PaymentModeDto>
+
+@{
+    ViewData["Title"] = "Payment Modes";
+}
+
+<h2>Payment Modes</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-success">
+        <i class="fas fa-plus"></i> Add New Payment Mode
+    </a>
+</p>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th><i class="fas fa-hashtag"></i> ID</th>
+            <th><i class="fas fa-money-bill-wave"></i> Mode Name</th>
+            <th><i class="fas fa-toggle-on"></i> Active</th>
+            <th><i class="fas fa-cogs"></i> Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.PaymentModeId</td>
+                <td>@item.ModeName</td>
+                <td>
+                    @if (item.IsActive)
+                    {
+                        <span class="badge bg-success"><i class="fas fa-check"></i> Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger"><i class="fas fa-times"></i> Inactive</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.PaymentModeId" class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@item.PaymentModeId" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash"></i> Delete
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
